@@ -8,6 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-excursion_db}
+      REPL_USER: ${REPL_USER:?Set REPL_USER in .env}
+      REPL_PASS: ${REPL_PASS:?Set REPL_PASS in .env}
     ports:
       - "3306:3306"
     volumes:
