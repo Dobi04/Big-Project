@@ -1,0 +1,6 @@
+@ExcursionSaaS.API_HostAddress = http://localhost:5100
+
+GET {{ExcursionSaaS.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

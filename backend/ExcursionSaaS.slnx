@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ExcursionSaaS.API/ExcursionSaaS.API.csproj" />
+    <Project Path="src/ExcursionSaaS.Application/ExcursionSaaS.Application.csproj" />
+    <Project Path="src/ExcursionSaaS.Domain/ExcursionSaaS.Domain.csproj" />
+    <Project Path="src/ExcursionSaaS.Infrastructure/ExcursionSaaS.Infrastructure.csproj" />
+  </Folder>
+</Solution>
