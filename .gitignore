@@ -5,6 +5,7 @@
 !.env.*.example
 **/appsettings.Local.json
 **/appsettings.*.local.json
+**/appsettings.Development.json
 
 # .NET build output and local tooling
 [Bb]in/
