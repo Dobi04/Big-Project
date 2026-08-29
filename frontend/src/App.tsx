@@ -1,20 +1,16 @@
-import { useEffect, useState } from 'react';
-import { apiClient } from './api/client';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
+import HomePage from './pages/HomePage';
 
 function App() {
-  const [status, setStatus] = useState('Testing...');
-
-  useEffect(() => {
-    apiClient.get('/weatherforecast')
-      .then(() => setStatus('✅ Backend connected'))
-      .catch((err) => setStatus('❌ Connection failed: ' + err.message));
-  }, []);
-
   return (
-    <div>
-      <h1>ExcursionSaaS</h1>
-      <p>{status}</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
