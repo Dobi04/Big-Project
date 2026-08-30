@@ -1,4 +1,5 @@
-﻿using ExcursionSaaS.Application.DTOs;
+﻿using ExcursionSaaS.Application.DTOs.AuthDTOs;
+using ExcursionSaaS.Application.DTOs.EmailVerificationDTOs;
 using ExcursionSaaS.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -45,6 +46,40 @@ namespace ExcursionSaaS.API.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("verify-email")]
+        [EnableRateLimiting("auth")]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailDto dto)
+        {
+            try
+            {
+                var result = await _authService.VerifyEmailAsync(dto);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
+            }
+        }
+
+        [HttpPost("resend-code")]
+        [EnableRateLimiting("auth")]
+        public async Task<IActionResult> ResendCode(ResendVerificationCodeDTO dto)
+        {
+            try
+            {
+                var result = await _authService.ResendVerificationCodeAsync(dto);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
             }
         }
     }

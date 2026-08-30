@@ -15,5 +15,8 @@ namespace ExcursionSaaS.Domain.Entities
         public string PasswordHash { get; set; } = string.Empty;
         public Roles Role { get; set; } = Roles.User;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool isEmailVerified { get; set; } = false;
+        public string? EmailVerificationCode { get; set; }
+        public DateTime? EmailVerificationCodeExpiry { get; set; }
     }
 }

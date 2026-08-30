@@ -23,6 +23,10 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
 
             builder.Property(u => u.Role).HasConversion<string>().HasMaxLength(20).IsRequired();
 
+            builder.Property(u => u.isEmailVerified).IsRequired().HasDefaultValue(false);
+            builder.Property(u => u.EmailVerificationCode).HasMaxLength(10);
+            builder.Property(u => u.EmailVerificationCodeExpiry);
+
             builder.HasIndex(u => u.Username).IsUnique();
             builder.HasIndex(u => u.Email).IsUnique();
         }

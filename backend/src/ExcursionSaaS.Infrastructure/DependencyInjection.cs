@@ -1,4 +1,5 @@
 ﻿using ExcursionSaaS.Application.Interfaces;
+using ExcursionSaaS.Infrastructure.EmailVerification;
 using ExcursionSaaS.Infrastructure.Persistence;
 using ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories;
 using ExcursionSaaS.Infrastructure.Security;
@@ -24,6 +25,7 @@ namespace ExcursionSaaS.Infrastructure
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IEmailSender, SmtpEmailSender>();
 
             return services;
         }

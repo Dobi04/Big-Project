@@ -3,6 +3,7 @@ using ExcursionSaaS.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
 namespace ExcursionSaaS.Application

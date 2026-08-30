@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ExcursionSaaS.Application.DTOs
+namespace ExcursionSaaS.Application.DTOs.AuthDTOs
 {
     public class RegistrationDTO
     {
