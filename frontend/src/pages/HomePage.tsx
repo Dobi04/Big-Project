@@ -10,8 +10,8 @@ export default function HomePage() {
       <div
         className={`rounded-[28px] border p-5 shadow-2xl ${
           isDark
-            ? 'border-violet-500/20 bg-gradient-to-br from-violet-500/15 via-slate-900 to-slate-900 shadow-violet-950/30'
-            : 'border-violet-200 bg-gradient-to-br from-violet-100 via-white to-slate-100 shadow-violet-200/50'
+            ? 'border-violet-500/20 bg-linear-to-br from-violet-500/15 via-slate-900 to-slate-900 shadow-violet-950/30'
+            : 'border-violet-200 bg-linear-to-br from-violet-100 via-white to-slate-100 shadow-violet-200/50'
         }`}
       >
         <p className={`text-[10px] font-semibold uppercase tracking-[0.24em] ${isDark ? 'text-violet-200' : 'text-violet-600'}`}>

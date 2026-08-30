@@ -77,6 +77,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
         const response = await apiClient.post('/api/Auth/register', payload);
         localStorage.setItem('authToken', response.data.token);
         localStorage.setItem('username', response.data.username || form.username);
+        localStorage.setItem('role', response.data.role || 'User');
         setSuccess('Registration successful. User saved to the database.');
       } else {
         const payload = {
@@ -87,6 +88,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
         const response = await apiClient.post('/api/Auth/login', payload);
         localStorage.setItem('authToken', response.data.token);
         localStorage.setItem('username', response.data.username || form.username);
+        localStorage.setItem('role', response.data.role || 'User');
         setSuccess('Login successful.');
       }
 
