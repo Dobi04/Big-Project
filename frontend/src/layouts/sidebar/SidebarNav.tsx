@@ -1,16 +1,20 @@
 import { Link } from 'react-router-dom';
-import { navItems } from './navigation';
+import { getVisibleNavItems } from './navigation';
 
 type Props = {
   classes: { navLink: string; iconTile: string };
   isCollapsed: boolean;
+  isLoggedIn: boolean;
+  role: string;
   onNavigate: () => void;
 };
 
-export default function SidebarNav({ classes, isCollapsed, onNavigate }: Props) {
+export default function SidebarNav({ classes, isCollapsed, isLoggedIn, role, onNavigate }: Props) {
+  const visibleNavItems = getVisibleNavItems(isLoggedIn, role);
+
   return (
     <nav className="mt-6 space-y-2" aria-label="Main navigation">
-      {navItems.map((item) => (
+      {visibleNavItems.map((item) => (
         <Link
           key={item.to}
           to={item.to}

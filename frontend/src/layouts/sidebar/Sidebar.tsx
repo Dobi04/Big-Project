@@ -77,7 +77,13 @@ export default function Sidebar({
           </button>
         </div>
 
-        <SidebarNav classes={classes} isCollapsed={isCollapsed} onNavigate={onCloseMobile} />
+        <SidebarNav
+          classes={classes}
+          isCollapsed={isCollapsed}
+          isLoggedIn={isLoggedIn}
+          role={role}
+          onNavigate={onCloseMobile}
+        />
 
         <div className={`mt-auto space-y-3 border-t pt-4 ${classes.border}`}>
           <UserPanel

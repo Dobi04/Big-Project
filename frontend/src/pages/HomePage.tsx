@@ -2,7 +2,8 @@ import { useOutletContext } from 'react-router-dom';
 import type { LayoutOutletContext } from '../layouts/MainLayout';
 
 export default function HomePage() {
-  const { theme } = useOutletContext<LayoutOutletContext>();
+  const outletContext = useOutletContext<LayoutOutletContext | undefined>();
+  const theme = outletContext?.theme ?? 'light';
   const isDark = theme === 'dark';
 
   return (
