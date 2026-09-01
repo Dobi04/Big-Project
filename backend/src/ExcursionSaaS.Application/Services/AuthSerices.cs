@@ -36,7 +36,7 @@ namespace ExcursionSaaS.Application.Services
                 throw new UnauthorizedAccessException("Wrong username or password");
 
             if (!user.isEmailVerified)
-                throw new UnauthorizedAccessException("Emain is now verified, pleace verify your email before going in");
+                throw new UnauthorizedAccessException("Email is not verified, please verify your email before going in");
 
             var token = _jwtTokenGenerator.GenerateToken(user);
 
