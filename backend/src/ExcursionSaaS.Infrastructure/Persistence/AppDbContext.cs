@@ -10,6 +10,7 @@ namespace ExcursionSaaS.Infrastructure.Persistence
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<User> Users => Set<User>();
+        public DbSet<PendingUserRegistration> PendingUserRegistrations => Set<PendingUserRegistration>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

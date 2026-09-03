@@ -22,6 +22,18 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 
         public async Task<User?> FindByUsernameAsync(string username) => await _appDbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
 
+        public async Task<PendingUserRegistration?> FindPendingByEmailAsync(string email) => await _appDbContext.PendingUserRegistrations.FirstOrDefaultAsync(r => r.Email == email);
+
+        public async Task<PendingUserRegistration?> FindPendingByUsernameAsync(string username) => await _appDbContext.PendingUserRegistrations.FirstOrDefaultAsync(r => r.Username == username);
+
+        public Task AddPendingAsync(PendingUserRegistration registration) => _appDbContext.PendingUserRegistrations.AddAsync(registration).AsTask();
+
+        public Task RemovePendingAsync(PendingUserRegistration registration)
+        {
+            _appDbContext.PendingUserRegistrations.Remove(registration);
+            return Task.CompletedTask;
+        }
+
         public async Task SaveChangesAsync() => await _appDbContext.SaveChangesAsync();
     }
 }
