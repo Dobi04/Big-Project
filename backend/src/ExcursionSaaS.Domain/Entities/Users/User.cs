@@ -1,7 +1,4 @@
-﻿using ExcursionSaaS.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ExcursionSaaS.Domain.Enums.Users;
 
 namespace ExcursionSaaS.Domain.Entities
 {
