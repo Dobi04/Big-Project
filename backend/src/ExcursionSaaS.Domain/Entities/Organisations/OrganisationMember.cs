@@ -6,9 +6,9 @@ namespace ExcursionSaaS.Domain.Entities
     {
         public int Id { get; set; }
         public int OrganisationId { get; set; }
-        public Organisation Organisation { get; set; } = new Organisation();
+        public Organisation Organisation { get; set; } = null!;
         public int MemberId { get; set; }
-        public User Member { get; set; } = new User();
+        public User Member { get; set; } = null!;
         public OrganisationMemberRole Role { get; set; } = OrganisationMemberRole.Participant;
         public MemberSubscriptionStatus PaymentStatus { get; set; } = MemberSubscriptionStatus.Free;
         public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
