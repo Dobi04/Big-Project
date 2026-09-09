@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ExcursionSaaS.Application.DTOs.AuthDTOs
 {
     public class LogInDTO
     {
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         public string Username { get; set; } = string.Empty;
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         public string Password { get; set; } = string.Empty;
     }
 }

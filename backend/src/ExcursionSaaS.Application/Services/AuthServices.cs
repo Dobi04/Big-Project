@@ -1,0 +1,145 @@
+using ExcursionSaaS.Application.DTOs.AuthDTOs;
+using ExcursionSaaS.Application.DTOs.EmailVerificationDTOs;
+using ExcursionSaaS.Application.Interfaces.Authentication;
+using ExcursionSaaS.Application.Interfaces.Communication;
+using ExcursionSaaS.Application.Interfaces.Repositories;
+using ExcursionSaaS.Application.Interfaces.Security;
+using ExcursionSaaS.Domain.Entities;
+using System.Security.Cryptography;
+
+namespace ExcursionSaaS.Application.Services;
+
+public class AuthServices : IAuthServices
+{
+    private const int VerificationCodeValidityMinutes = 5;
+
+    private readonly IUserRepository _userRepository;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IEmailSender _emailSender;
+
+    public AuthServices(
+        IUserRepository userRepository,
+        IJwtTokenGenerator jwtTokenGenerator,
+        IPasswordHasher passwordHasher,
+        IEmailSender emailSender)
+    {
+        _userRepository = userRepository;
+        _jwtTokenGenerator = jwtTokenGenerator;
+        _passwordHasher = passwordHasher;
+        _emailSender = emailSender;
+    }
+
+    public async Task<AuthResponseDTO> LoginAsync(LogInDTO dto)
+    {
+        var user = await _userRepository.FindByUsernameAsync(dto.Username);
+        if (user == null || !_passwordHasher.Verify(dto.Password, user.PasswordHash))
+            throw new UnauthorizedAccessException("Wrong username or password");
+
+        if (!user.isEmailVerified)
+            throw new UnauthorizedAccessException("Email is not verified, please verify your email before logging in");
+
+        return new AuthResponseDTO
+        {
+            Token = _jwtTokenGenerator.GenerateToken(user),
+            Username = user.Username,
+            Role = user.Role.ToString()
+        };
+    }
+
+    public async Task<MessageResponseDTO> RegisterAsync(RegistrationDTO dto)
+    {
+        var existingUsername = await _userRepository.FindByUsernameAsync(dto.Username);
+        var pendingUsername = await _userRepository.FindPendingByUsernameAsync(dto.Username);
+        if (existingUsername != null || pendingUsername != null)
+            throw new InvalidOperationException("Username already exists");
+
+        var existingEmail = await _userRepository.FindByEmailAsync(dto.Email);
+        var pendingEmail = await _userRepository.FindPendingByEmailAsync(dto.Email);
+        if (existingEmail != null || pendingEmail != null)
+            throw new InvalidOperationException("Email already exists");
+
+        var code = GenerateVerificationCode();
+        var pendingRegistration = new PendingUserRegistration
+        {
+            Name = dto.Name,
+            Surname = dto.Surname,
+            Username = dto.Username,
+            Email = dto.Email,
+            PasswordHash = _passwordHasher.Hash(dto.Password),
+            VerificationCode = code,
+            VerificationCodeExpiry = DateTime.UtcNow.AddMinutes(VerificationCodeValidityMinutes)
+        };
+
+        await _userRepository.AddPendingAsync(pendingRegistration);
+        await _userRepository.SaveChangesAsync();
+        await _emailSender.SendEmailAsync(
+            pendingRegistration.Email,
+            "Verifikacija naloga",
+            $"<p>Zdravo {pendingRegistration.Name},</p><p>Tvoj verifikacioni kod je: <b>{code}</b></p>" +
+            $"<p>Kod važi {VerificationCodeValidityMinutes} minuta.</p>");
+
+        return new MessageResponseDTO
+        {
+            Message = "Registration successful. Please check your email for the verification code."
+        };
+    }
+
+    public async Task<MessageResponseDTO> ResendVerificationCodeAsync(ResendVerificationCodeDTO dto)
+    {
+        var pendingRegistration = await _userRepository.FindPendingByEmailAsync(dto.Email);
+        if (pendingRegistration == null)
+        {
+            return new MessageResponseDTO { Message = "A new code has been sent." };
+        }
+
+        var code = GenerateVerificationCode();
+        pendingRegistration.VerificationCode = code;
+        pendingRegistration.VerificationCodeExpiry = DateTime.UtcNow.AddMinutes(VerificationCodeValidityMinutes);
+
+        await _userRepository.SaveChangesAsync();
+        await _emailSender.SendEmailAsync(
+            pendingRegistration.Email,
+            "Verifikacija naloga",
+            $"<p>Tvoj novi verifikacioni kod je: <b>{code}</b></p>" +
+            $"<p>Kod važi {VerificationCodeValidityMinutes} minuta.</p>");
+
+        return new MessageResponseDTO { Message = "If the email exists, a new code has been sent." };
+    }
+
+    public async Task<AuthResponseDTO> VerifyEmailAsync(VerifyEmailDto dto)
+    {
+        var pendingRegistration = await _userRepository.FindPendingByEmailAsync(dto.Email);
+        if (pendingRegistration == null || pendingRegistration.VerificationCode != dto.Code)
+            throw new InvalidOperationException("Invalid email or verification code");
+
+        if (pendingRegistration.VerificationCodeExpiry < DateTime.UtcNow)
+            throw new InvalidOperationException("Verification code has expired please request a new one");
+
+        var user = new User
+        {
+            Name = pendingRegistration.Name,
+            Surname = pendingRegistration.Surname,
+            Username = pendingRegistration.Username,
+            Email = pendingRegistration.Email,
+            PasswordHash = pendingRegistration.PasswordHash,
+            isEmailVerified = true
+        };
+
+        await _userRepository.Add(user);
+        await _userRepository.RemovePendingAsync(pendingRegistration);
+        await _userRepository.SaveChangesAsync();
+
+        return new AuthResponseDTO
+        {
+            Token = _jwtTokenGenerator.GenerateToken(user),
+            Username = user.Username,
+            Role = user.Role.ToString()
+        };
+    }
+
+    private static string GenerateVerificationCode()
+    {
+        return RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
+    }
+}

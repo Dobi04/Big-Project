@@ -1,4 +1,4 @@
-﻿using ExcursionSaaS.Application.Interfaces;
+﻿using ExcursionSaaS.Application.Interfaces.Security;
 using ExcursionSaaS.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

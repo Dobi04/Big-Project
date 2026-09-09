@@ -1,4 +1,4 @@
-﻿using ExcursionSaaS.Application.Interfaces;
+﻿using ExcursionSaaS.Application.Interfaces.Communication;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;

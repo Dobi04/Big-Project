@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ExcursionSaaS.Application.DTOs.AuthDTOs
 {
     public class RegistrationDTO
     {
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
+        [Required, StringLength(100)]
         public string Name { get; set; } = string.Empty;
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
+        [Required, StringLength(100)]
         public string Surname { get; set; } = string.Empty;
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(50, MinimumLength = 3)]
+        [Required, StringLength(50, MinimumLength = 3)]
         public string Username { get; set; } = string.Empty;
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.EmailAddress]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
+        [Required, EmailAddress, StringLength(100)]
         public string Email { get; set; } = string.Empty;
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.MinLength(8)]
+        [Required, MinLength(8)]
         public string Password { get; set; } = string.Empty;
     }
 }

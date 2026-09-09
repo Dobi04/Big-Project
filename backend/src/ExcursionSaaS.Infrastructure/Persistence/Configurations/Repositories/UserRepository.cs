@@ -1,4 +1,4 @@
-﻿using ExcursionSaaS.Application.Interfaces;
+﻿using ExcursionSaaS.Application.Interfaces.Repositories;
 using ExcursionSaaS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;

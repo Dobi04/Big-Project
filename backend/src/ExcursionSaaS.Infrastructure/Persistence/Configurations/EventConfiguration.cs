@@ -16,7 +16,7 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
             builder.Property(e => e.Name).IsRequired().HasMaxLength(150);
             builder.Property(e => e.StartDate).IsRequired();
             builder.Property(e => e.EndDate).IsRequired();
-            builder.Property(e => e.Status).HasDefaultValue(EventStatus.Active);
+            builder.Property(e => e.Status).HasConversion<string>().HasMaxLength(20).IsRequired().HasDefaultValue(EventStatus.Active);
 
             builder.HasOne(e => e.Owner)
                 .WithMany()

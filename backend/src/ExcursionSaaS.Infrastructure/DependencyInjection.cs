@@ -1,4 +1,6 @@
-﻿using ExcursionSaaS.Application.Interfaces;
+﻿using ExcursionSaaS.Application.Interfaces.Communication;
+using ExcursionSaaS.Application.Interfaces.Repositories;
+using ExcursionSaaS.Application.Interfaces.Security;
 using ExcursionSaaS.Infrastructure.EmailVerification;
 using ExcursionSaaS.Infrastructure.Persistence;
 using ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories;
@@ -25,7 +27,10 @@ namespace ExcursionSaaS.Infrastructure
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IOrganisationRepository, OrganisationRepository>();
             services.AddScoped<IEmailSender, SmtpEmailSender>();
+
+            services.AddScoped<INotificationRepository, NotificationRepository>();
 
             return services;
         }

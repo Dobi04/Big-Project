@@ -1,4 +1,4 @@
-﻿using ExcursionSaaS.Application.Interfaces;
+﻿using ExcursionSaaS.Application.Interfaces.Security;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ExcursionSaaS.Application.DTOs.EmailVerificationDTOs
 {
     public class VerifyEmailDto
     {
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(6, MinimumLength = 6)]
+        [Required, StringLength(6, MinimumLength = 6), RegularExpression("^[0-9]{6}$")]
         public string Code { get; set; } = string.Empty;
     }
 }
