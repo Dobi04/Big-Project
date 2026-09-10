@@ -6,6 +6,7 @@ using ExcursionSaaS.Application.Interfaces.Repositories;
 using ExcursionSaaS.Application.Interfaces.Security;
 using ExcursionSaaS.Domain.Entities;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace ExcursionSaaS.Application.Services;
 
@@ -52,12 +53,18 @@ public class AuthServices : IAuthServices
         var existingUsername = await _userRepository.FindByUsernameAsync(dto.Username);
         var pendingUsername = await _userRepository.FindPendingByUsernameAsync(dto.Username);
         if (existingUsername != null || pendingUsername != null)
-            throw new InvalidOperationException("Username already exists");
+            return new MessageResponseDTO
+            {
+                Message = "Registration successful. Please check your email for the verification code."
+            };
 
         var existingEmail = await _userRepository.FindByEmailAsync(dto.Email);
         var pendingEmail = await _userRepository.FindPendingByEmailAsync(dto.Email);
         if (existingEmail != null || pendingEmail != null)
-            throw new InvalidOperationException("Email already exists");
+            return new MessageResponseDTO
+            {
+                Message = "Registration successful. Please check your email for the verification code."
+            };
 
         var code = GenerateVerificationCode();
         var pendingRegistration = new PendingUserRegistration
@@ -110,7 +117,13 @@ public class AuthServices : IAuthServices
     public async Task<AuthResponseDTO> VerifyEmailAsync(VerifyEmailDto dto)
     {
         var pendingRegistration = await _userRepository.FindPendingByEmailAsync(dto.Email);
-        if (pendingRegistration == null || pendingRegistration.VerificationCode != dto.Code)
+        if (pendingRegistration == null)
+            throw new InvalidOperationException("Invalid email or verification code");
+
+        var expectedCode = Encoding.UTF8.GetBytes(pendingRegistration.VerificationCode);
+        var providedCode = Encoding.UTF8.GetBytes(dto.Code ?? string.Empty);
+        if (expectedCode.Length != providedCode.Length ||
+            !CryptographicOperations.FixedTimeEquals(expectedCode, providedCode))
             throw new InvalidOperationException("Invalid email or verification code");
 
         if (pendingRegistration.VerificationCodeExpiry < DateTime.UtcNow)
