@@ -7,10 +7,10 @@ namespace ExcursionSaaS.Application.Interfaces.Organisations;
 public interface IOrganisationService
 {
 
-    Task<List<Organisation>> GetTopOrganisationsAsync(double? latitude, double? longitude, int count = 10);
+    Task<List<OrganisationSummaryDTO>> GetTopOrganisationsAsync(double? latitude, double? longitude, int count = 10);
     Task<OrganisationDetailsDTO> GetOrganisationByIdAsync(int organisationId);
     Task<OrganisationDetailsDTO> CreateOrganisationAsync(CreateOrganisationDTO createDto, int requesterId, Roles requesterRole);
-    Task UpdateAsync(int id, UpdateOrganisationDTO updateDto, int requesterId, Roles requesterRole);
-    Task DeleteAsync(int id, int requesterId, Roles requesterRole);
+    Task UpdateOrganisationAsync(int id, UpdateOrganisationDTO updateDto, int requesterId, Roles requesterRole);
+    Task DeleteOrganisationAsync(int id, int requesterId, Roles requesterRole);
     Task<List<JoinedOrganisationDTO>> GetJoinedOrganisationsAsync(int memberId);
 }
