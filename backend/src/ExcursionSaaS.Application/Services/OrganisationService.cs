@@ -9,6 +9,7 @@ namespace ExcursionSaaS.Application.Services
 {
     public class OrganisationService : IOrganisationService
     {
+        #region Constants and Constructors
         private readonly IOrganisationRepository _organisationRepository;
         private readonly INotificationRepository _notificationRepository;
 
@@ -17,7 +18,9 @@ namespace ExcursionSaaS.Application.Services
             _organisationRepository = organisationRepository;
             _notificationRepository = notificationRepository;
         }
+        #endregion
 
+        #region Public Methods
         public async Task<List<JoinedOrganisationDTO>> GetJoinedOrganisationsAsync(int memberId)
         {
             var memberships = await _organisationRepository.GetMembershipsByUserAsync(memberId);
@@ -65,7 +68,9 @@ namespace ExcursionSaaS.Application.Services
                 ?? throw new KeyNotFoundException("Organisation not found");
             return ToDetailsDTO(organisation);
         }
+        #endregion
 
+        #region Autorised Methods
         public async Task<OrganisationDetailsDTO> CreateOrganisationAsync(CreateOrganisationDTO createDto, int requesterId, Roles requesterRole)
         {
             EnsureCanCreate(requesterRole);
@@ -100,9 +105,9 @@ namespace ExcursionSaaS.Application.Services
             return await GetOrganisationByIdAsync(organisation.Id);
         }
 
-        public Task UpdateOrganisationAsync(int id, UpdateOrganisationDTO updateDto, int requesterId, Roles requesterRole)
+        public async Task UpdateOrganisationAsync(int id, UpdateOrganisationDTO updateDto, int requesterId, Roles requesterRole)
         {
-            var organisation = _organisationRepository.GetOrganisationByIdAsync(id).Result
+            var organisation = await _organisationRepository.GetOrganisationByIdAsync(id)
                 ?? throw new KeyNotFoundException("Organisation not found");
 
             EnsureCanMenage(organisation, requesterId, requesterRole);
@@ -118,12 +123,12 @@ namespace ExcursionSaaS.Application.Services
             organisation.Latitude = updateDto.Latitude;
             organisation.Longitude = updateDto.Longitude;
 
-            return _organisationRepository.SaveChangesAsync();
+            await _organisationRepository.SaveChangesAsync();
         }
 
         public async Task DeleteOrganisationAsync(int id, int requesterId, Roles requesterRole)
         {
-            var organisation = _organisationRepository.GetOrganisationByIdAsync(id).Result
+            var organisation = await _organisationRepository.GetOrganisationByIdAsync(id)
                 ?? throw new KeyNotFoundException("Organisation not found");
 
             EnsureCanMenage(organisation, requesterId, requesterRole);
@@ -131,7 +136,9 @@ namespace ExcursionSaaS.Application.Services
             _organisationRepository.Remove(organisation);
             await _organisationRepository.SaveChangesAsync();
         }
+        #endregion
 
+        #region Helper Methods
         private static void EnsureCanCreate(Roles requesterRole)
         {
             if (requesterRole != Roles.Admin && requesterRole != Roles.Owner)
@@ -165,6 +172,22 @@ namespace ExcursionSaaS.Application.Services
                 : throw new ArgumentException($"Invalid subscription type value: '{subscriptionType}'. Expected 'Free', 'Paid', or 'None'.");
         }
 
+        private static double HaversineDistanceKm(double lat1, double lon1, double lat2, double lon2)
+        {
+            const double R = 6371; // Radius of the Earth in km
+            var dLat = ToRadians(lat2 - lat1);
+            var dLon = ToRadians(lon2 - lon1);
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            return R * c;
+        }
+
+        private static double ToRadians(double x) => x * Math.PI / 180;
+        #endregion
+
+        #region DTO Conversion Methods
         private static OrganisationSummaryDTO ToSummaryDTO(Organisation organisation, double? distanceKm)
         {
             return new OrganisationSummaryDTO
@@ -204,19 +227,6 @@ namespace ExcursionSaaS.Application.Services
                 CreatedAt = organisation.CreatedAt
             };
         }
-
-        private static double HaversineDistanceKm(double lat1, double lon1, double lat2, double lon2)
-        {
-            const double R = 6371; // Radius of the Earth in km
-            var dLat = ToRadians(lat2 - lat1);
-            var dLon = ToRadians(lon2 - lon1);
-            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                    Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
-                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            return R * c;
-        }
-
-        private static double ToRadians(double x) => x * Math.PI / 180;
+        #endregion
     }
 }

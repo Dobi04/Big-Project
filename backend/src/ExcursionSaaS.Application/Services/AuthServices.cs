@@ -12,6 +12,7 @@ namespace ExcursionSaaS.Application.Services;
 
 public class AuthServices : IAuthServices
 {
+    #region Constants and Constructors
     private const int VerificationCodeValidityMinutes = 5;
 
     private readonly IUserRepository _userRepository;
@@ -30,7 +31,9 @@ public class AuthServices : IAuthServices
         _passwordHasher = passwordHasher;
         _emailSender = emailSender;
     }
+    #endregion
 
+    #region Login
     public async Task<AuthResponseDTO> LoginAsync(LogInDTO dto)
     {
         var user = await _userRepository.FindByUsernameAsync(dto.Username);
@@ -47,24 +50,36 @@ public class AuthServices : IAuthServices
             Role = user.Role.ToString()
         };
     }
+    #endregion
 
+    #region Registration
     public async Task<MessageResponseDTO> RegisterAsync(RegistrationDTO dto)
     {
         var existingUsername = await _userRepository.FindByUsernameAsync(dto.Username);
-        var pendingUsername = await _userRepository.FindPendingByUsernameAsync(dto.Username);
-        if (existingUsername != null || pendingUsername != null)
+        var existingEmail = await _userRepository.FindByEmailAsync(dto.Email);
+        if (existingUsername != null || existingEmail != null)
             return new MessageResponseDTO
             {
                 Message = "Registration successful. Please check your email for the verification code."
             };
 
-        var existingEmail = await _userRepository.FindByEmailAsync(dto.Email);
+        var pendingUsername = await _userRepository.FindPendingByUsernameAsync(dto.Username);
         var pendingEmail = await _userRepository.FindPendingByEmailAsync(dto.Email);
-        if (existingEmail != null || pendingEmail != null)
+
+        var now = DateTime.UtcNow;
+        var isUsernameLocked = pendingUsername != null && pendingUsername.VerificationCodeExpiry >= now;
+        var isEmailLocked = pendingEmail != null && pendingEmail.VerificationCodeExpiry >= now;
+
+        if (isEmailLocked || isUsernameLocked)
             return new MessageResponseDTO
             {
                 Message = "Registration successful. Please check your email for the verification code."
             };
+
+        if (pendingUsername != null)
+            await _userRepository.RemovePendingAsync(pendingUsername);
+        if (pendingEmail != null)
+            await _userRepository.RemovePendingAsync(pendingEmail);
 
         var code = GenerateVerificationCode();
         var pendingRegistration = new PendingUserRegistration
@@ -91,7 +106,9 @@ public class AuthServices : IAuthServices
             Message = "Registration successful. Please check your email for the verification code."
         };
     }
+    #endregion
 
+    #region Email Verification
     public async Task<MessageResponseDTO> ResendVerificationCodeAsync(ResendVerificationCodeDTO dto)
     {
         var pendingRegistration = await _userRepository.FindPendingByEmailAsync(dto.Email);
@@ -155,4 +172,5 @@ public class AuthServices : IAuthServices
     {
         return RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
     }
+    #endregion
 }

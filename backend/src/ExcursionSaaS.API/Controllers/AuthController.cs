@@ -3,6 +3,7 @@ using ExcursionSaaS.Application.DTOs.EmailVerificationDTOs;
 using ExcursionSaaS.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace ExcursionSaaS.API.Controllers
@@ -31,6 +32,13 @@ namespace ExcursionSaaS.API.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (DbUpdateException)
+            {
+                return Ok(new MessageResponseDTO
+                {
+                    Message = "Registration successful. Please check your email for the verification code."
+                });
             }
         }
 
