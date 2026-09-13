@@ -7,6 +7,7 @@ namespace ExcursionSaaS.Application
 {
     public static class DependencyInjection
     {
+        #region Service Registration
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IAuthServices, AuthServices>();
@@ -14,5 +15,6 @@ namespace ExcursionSaaS.Application
 
             return services;
         }
+        #endregion
     }
 }

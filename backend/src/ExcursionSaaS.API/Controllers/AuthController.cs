@@ -12,13 +12,16 @@ namespace ExcursionSaaS.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        #region Constants and Constructors
         private readonly IAuthServices _authService;
 
         public AuthController(IAuthServices authService)
         {
             _authService = authService;
         }
+        #endregion
 
+        #region Authentication Endpoints
         [HttpPost("register")]
         [EnableRateLimiting("auth")]
         public async Task<IActionResult> Register(RegistrationDTO dto)
@@ -90,5 +93,6 @@ namespace ExcursionSaaS.API.Controllers
                 }
             }
         }
+        #endregion
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.RateLimiting;
 
+#region Builder Setup
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -24,7 +25,9 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+#endregion
 
+#region JWT Configuration
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key is not configured.");
 if (Encoding.UTF8.GetByteCount(jwtKey) < 32)
@@ -34,7 +37,9 @@ var jwtIssuer = builder.Configuration["Jwt:Issuer"]
     ?? throw new InvalidOperationException("Jwt:Issuer is not configured.");
 var jwtAudience = builder.Configuration["Jwt:Audience"]
     ?? throw new InvalidOperationException("Jwt:Audience is not configured.");
+#endregion
 
+#region Authentication and Authorization
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -56,6 +61,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+#endregion
+
+#region Rate Limiting
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -70,7 +78,9 @@ builder.Services.AddRateLimiter(options =>
         });
     });
 });
+#endregion
 
+#region App Pipeline
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -87,3 +97,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
+#endregion

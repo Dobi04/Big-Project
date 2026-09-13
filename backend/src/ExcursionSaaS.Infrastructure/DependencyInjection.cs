@@ -16,6 +16,7 @@ namespace ExcursionSaaS.Infrastructure
 {
     public static class DependencyInjection
     {
+        #region Infrastructure Registration
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
@@ -34,5 +35,6 @@ namespace ExcursionSaaS.Infrastructure
 
             return services;
         }
+        #endregion
     }
 }

@@ -1,13 +1,8 @@
-﻿using ExcursionSaaS.Application.DTOs.AuthDTOs;
-using ExcursionSaaS.Application.DTOs.EmailVerificationDTOs;
-using ExcursionSaaS.Application.DTOs.OrganisationDTOs;
-using ExcursionSaaS.Application.Interfaces.Authentication;
+﻿using ExcursionSaaS.Application.DTOs.OrganisationDTOs;
 using ExcursionSaaS.Application.Interfaces.Organisations;
 using ExcursionSaaS.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
-using System.Data;
 using System.Security.Claims;
 
 namespace ExcursionSaaS.API.Controllers
@@ -16,13 +11,16 @@ namespace ExcursionSaaS.API.Controllers
     [Route("api/[controller]")]
     public class OrganisationControler : ControllerBase
     {
+        #region Constants and Constructors
         private readonly IOrganisationService _organisationService;
 
         public OrganisationControler(IOrganisationService organisationService)
         {
             _organisationService = organisationService;
         }
+        #endregion
 
+        #region Organisation Endpoints
         [HttpGet("top")]
         public async Task<IActionResult> GetTopOrganisations([FromQuery] double? latitude, [FromQuery] double? longitude, [FromQuery] int count = 10)
         {
@@ -98,6 +96,7 @@ namespace ExcursionSaaS.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
         [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteOrganisation(int id)
@@ -116,16 +115,20 @@ namespace ExcursionSaaS.API.Controllers
                 return Forbid(ex.Message);
             }
         }
+        #endregion
 
+        #region Helper Methods
         private int GetUserId()
         {
-            return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) 
+            return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? throw new UnauthorizedAccessException("User ID claim not found."));
         }
+
         private Roles GetUserRole()
         {
-            return Enum.Parse<Roles>(User.FindFirstValue(ClaimTypes.Role) 
+            return Enum.Parse<Roles>(User.FindFirstValue(ClaimTypes.Role)
                 ?? throw new UnauthorizedAccessException("Role claim not found."));
         }
+        #endregion
     }
 }

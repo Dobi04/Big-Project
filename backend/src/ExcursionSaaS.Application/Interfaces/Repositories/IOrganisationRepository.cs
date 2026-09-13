@@ -4,14 +4,18 @@ namespace ExcursionSaaS.Application.Interfaces.Repositories;
 
 public interface IOrganisationRepository
 {
+    #region Query Methods
     Task<Organisation?> GetOrganisationByIdAsync(int organisationId);
     Task<List<Organisation>> GetTopByPopularityAsync(int count);
     Task<List<Organisation>> GetPublicActiveByCordinatesAsync();
     Task<List<OrganisationMember>> GetMembershipsByUserAsync(int memberId);
+    #endregion
 
+    #region Command Methods
     Task AddAsync(Organisation organisation);
     Task AddMemberAsync(OrganisationMember member);
     void Remove(Organisation organisation);
     void RemoveMember(OrganisationMember member);
     Task SaveChangesAsync();
+    #endregion
 }
