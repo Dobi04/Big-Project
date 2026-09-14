@@ -38,7 +38,7 @@ namespace ExcursionSaaS.API.Controllers
         {
             try
             {
-                var organisation = await _organisationService.GetOrganisationByIdAsync(id);
+                var organisation = await _organisationService.GetOrganisationByIdAsync(id, GetUserId());
                 return Ok(organisation);
             }
             catch (KeyNotFoundException ex)
@@ -115,6 +115,99 @@ namespace ExcursionSaaS.API.Controllers
                 return Forbid(ex.Message);
             }
         }
+
+        [HttpPost("{id:int}/join")]
+        [Authorize]
+        public async Task<IActionResult> JoinOrganisation(int id)
+        {
+            try
+            {
+                await _organisationService.JoinOrganisationAsync(id, GetUserId());
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:int}/leave")]
+        [Authorize]
+        public async Task<IActionResult> LeaveOrganisation(int id)
+        {
+            try
+            {
+                await _organisationService.LeaveOrganisationAsync(id, GetUserId());
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:int}/members/{memberId:int}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveMemberFromOrganisation(int id, int memberId)
+        {
+            try
+            {
+                await _organisationService.RemoveFromOrganisationAsync(id, GetUserId(), GetUserRole(), memberId);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id:int}/promote/{memberId:int}")]
+        [Authorize]
+        public async Task<IActionResult> TransferOwnership(int id, int memberId)
+        {
+            try
+            {
+                await _organisationService.TransferOwnershipAsync(id, GetUserId(), GetUserRole(), memberId);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
         #endregion
 
         #region Helper Methods

@@ -21,10 +21,10 @@ namespace ExcursionSaaS.Application.Services
         #endregion
 
         #region Public Methods
-        public async Task<List<JoinedOrganisationDTO>> GetJoinedOrganisationsAsync(int memberId)
+        public async Task<List<JoinedOrganisationDTO>> GetJoinedOrganisationsAsync(int requesterId)
         {
-            var memberships = await _organisationRepository.GetMembershipsByUserAsync(memberId);
-            var unreadNotificationsCount = await _notificationRepository.GetUnreadNotificationCountsForUserAsync(memberId);
+            var memberships = await _organisationRepository.GetMembershipsByUserAsync(requesterId);
+            var unreadNotificationsCount = await _notificationRepository.GetUnreadNotificationCountsForUserAsync(requesterId);
 
             return memberships.Select(m => new JoinedOrganisationDTO
             {
@@ -62,11 +62,59 @@ namespace ExcursionSaaS.Application.Services
             return top.Select(o => ToSummaryDTO(o, distanceKm: null)).ToList();
         }
 
-        public async Task<OrganisationDetailsDTO> GetOrganisationByIdAsync(int organisationId)
+        public async Task<OrganisationDetailsDTO> GetOrganisationByIdAsync(int organisationId, int requesterId)
         {
             var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
                 ?? throw new KeyNotFoundException("Organisation not found");
+            if (organisation.Visibility != OrganisationVisibility.Public && organisation.OwnerId != requesterId)
+                throw new UnauthorizedAccessException("You are not authorized to view this organisation.");
+            if (organisation.Status != OrganisationStatus.Active)
+                throw new InvalidOperationException("This organisation is not active.");
+
             return ToDetailsDTO(organisation);
+        }
+
+        public async Task JoinOrganisationAsync(int organisationId, int requesterId)
+        {
+            var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
+                ?? throw new KeyNotFoundException("Organisation not found");
+
+            if(organisation.Visibility != OrganisationVisibility.Private)
+                throw new UnauthorizedAccessException("You cannot join a private organisation without an invitation.");
+            if(organisation.Status != OrganisationStatus.Active)
+                throw new InvalidOperationException("You cannot join an organisation that is not active.");
+
+            var alreadyMember = organisation.OwnerId == requesterId || organisation.Members.Any(m => m.MemberId == requesterId);
+            if (alreadyMember)
+                throw new InvalidOperationException("You are already a member of this organisation.");
+
+            await _organisationRepository.AddMemberAsync(new OrganisationMember
+            {
+                OrganisationId = organisationId,
+                MemberId = requesterId,
+                Role = OrganisationMemberRole.Participant,
+                PaymentStatus = MemberSubscriptionStatus.PendingPayment,
+                JoinedAt = DateTime.UtcNow
+            });
+
+            await _organisationRepository.SaveChangesAsync();
+        }
+
+        public async Task LeaveOrganisationAsync(int organisationId, int requesterId)
+        {
+            var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
+                ?? throw new KeyNotFoundException("Organisation not found");
+
+            var membership = organisation.Members.FirstOrDefault(m => m.MemberId == requesterId);
+            if (membership == null)
+                throw new InvalidOperationException("You are not a member of this organisation.");
+
+            if (organisation.OwnerId == requesterId)
+                throw new InvalidOperationException("The owner cannot leave the organisation. Consider transferring ownership or deleting the organisation.");
+
+
+            _organisationRepository.RemoveMember(membership);
+            await _organisationRepository.SaveChangesAsync();
         }
         #endregion
 
@@ -102,7 +150,7 @@ namespace ExcursionSaaS.Application.Services
             });
             await _organisationRepository.SaveChangesAsync();
 
-            return await GetOrganisationByIdAsync(organisation.Id);
+            return await GetOrganisationByIdAsync(organisation.Id, requesterId);
         }
 
         public async Task UpdateOrganisationAsync(int id, UpdateOrganisationDTO updateDto, int requesterId, Roles requesterRole)
@@ -134,6 +182,51 @@ namespace ExcursionSaaS.Application.Services
             EnsureCanMenage(organisation, requesterId, requesterRole);
 
             _organisationRepository.Remove(organisation);
+            await _organisationRepository.SaveChangesAsync();
+        }
+
+        public async Task RemoveFromOrganisationAsync(int organisationId, int requesterId, Roles requesterRole, int memberToRemoveId)
+        {
+            var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
+                ?? throw new KeyNotFoundException("Organisation not found");
+
+            EnsureCanMenage(organisation, requesterId, requesterRole);
+
+            if (memberToRemoveId == requesterId)
+                throw new InvalidOperationException("You cannot remove yourself from the organisation.");
+            if (organisation.OwnerId == memberToRemoveId)
+                throw new InvalidOperationException("You cannot remove the owner from the organisation.");
+            
+            var membership = organisation.Members.FirstOrDefault(m => m.MemberId == memberToRemoveId);
+            if (membership == null)
+                throw new InvalidOperationException("The specified user is not a member of this organisation.");
+
+            _organisationRepository.RemoveMember(membership);
+            await _organisationRepository.SaveChangesAsync();
+        }
+
+        public async Task TransferOwnershipAsync(int organisationId, int requesterId, Roles requesterRole, int newOwnerId)
+        {
+            var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
+                ?? throw new KeyNotFoundException("Organisation not found");
+
+            EnsureCanMenage(organisation, requesterId, requesterRole);
+            
+            if (organisation.OwnerId != requesterId)
+                throw new UnauthorizedAccessException("Only the current owner can transfer ownership.");
+            
+            var newOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == newOwnerId);
+            if (newOwnerMembership == null)
+                throw new InvalidOperationException("The specified user is not a member of this organisation.");
+            
+            organisation.OwnerId = newOwnerId;
+            newOwnerMembership.Role = OrganisationMemberRole.Owner;
+            
+            var previousOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == requesterId);
+            if (previousOwnerMembership != null)
+            {
+                previousOwnerMembership.Role = OrganisationMemberRole.Participant;
+            }
             await _organisationRepository.SaveChangesAsync();
         }
         #endregion
@@ -227,6 +320,7 @@ namespace ExcursionSaaS.Application.Services
                 CreatedAt = organisation.CreatedAt
             };
         }
+
         #endregion
     }
 }
