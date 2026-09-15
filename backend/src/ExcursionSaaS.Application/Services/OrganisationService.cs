@@ -214,7 +214,16 @@ namespace ExcursionSaaS.Application.Services
                 ?? throw new KeyNotFoundException("Organisation not found");
 
             EnsureCanMenage(organisation, requesterId, requesterRole);
-            
+
+            if (newOwnerId == organisation.OwnerId)
+                throw new InvalidOperationException("The new owner is already the owner of the organisation.");
+
+            var previousOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == organisation.OwnerId);
+            if (previousOwnerMembership != null)
+            {
+                previousOwnerMembership.Role = OrganisationMemberRole.Participant;
+            }
+
             var newOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == newOwnerId);
             if (newOwnerMembership == null)
                 throw new InvalidOperationException("The specified user is not a member of this organisation.");
@@ -222,11 +231,6 @@ namespace ExcursionSaaS.Application.Services
             organisation.OwnerId = newOwnerId;
             newOwnerMembership.Role = OrganisationMemberRole.Owner;
             
-            var previousOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == requesterId);
-            if (previousOwnerMembership != null)
-            {
-                previousOwnerMembership.Role = OrganisationMemberRole.Participant;
-            }
             await _organisationRepository.SaveChangesAsync();
         }
         #endregion
@@ -291,6 +295,7 @@ namespace ExcursionSaaS.Application.Services
                 OrganisationDescription = organisation.OrganisationDescription,
                 Type = organisation.Type,
                 Visibility = organisation.Visibility.ToString(),
+                MembersCount = organisation.Members.Count,
                 AverageRating = organisation.AverageRating,
                 RatingsCount = organisation.RatingsCount,
                 DistanceKm = distanceKm
