@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import { RequireAdmin, RequireAuth } from './components/ProtectedRoute';
@@ -6,8 +7,22 @@ import ExcursionsPage from './pages/ExcursionsPage';
 import TrackingPage from './pages/TrackingPage';
 import PaymentsPage from './pages/PaymentsPage';
 import AdminPage from './pages/AdminPage';
+import { apiClient } from './api/client';
 
 function App() {
+  useEffect(() => {
+    apiClient
+      .get('/api/Auth/me')
+      .then((response) => {
+        const { username, role } = response.data;
+        localStorage.setItem('username', username);
+        localStorage.setItem('role', role);
+      })
+      .catch(() =>{
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
+      })
+  }, []);
   return (
     <BrowserRouter>
       <Routes>

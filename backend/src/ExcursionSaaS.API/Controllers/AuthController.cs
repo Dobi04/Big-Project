@@ -1,10 +1,12 @@
 ﻿using ExcursionSaaS.Application.DTOs.AuthDTOs;
 using ExcursionSaaS.Application.DTOs.EmailVerificationDTOs;
 using ExcursionSaaS.Application.Interfaces.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Security.Claims;
 
 namespace ExcursionSaaS.API.Controllers
 {
@@ -23,6 +25,16 @@ namespace ExcursionSaaS.API.Controllers
         #endregion
 
         #region Authentication Endpoints
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult Me()
+        {
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            return Ok(new { username, role });
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegistrationDTO dto)
         {
