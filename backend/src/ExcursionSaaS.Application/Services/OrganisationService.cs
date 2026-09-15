@@ -161,7 +161,7 @@ namespace ExcursionSaaS.Application.Services
             var organisation = await _organisationRepository.GetOrganisationByIdAsync(id)
                 ?? throw new KeyNotFoundException("Organisation not found");
 
-            EnsureCanMenage(organisation, requesterId, requesterRole);
+            EnsureCanManage(organisation, requesterId, requesterRole);
 
             organisation.OrganisationName = updateDto.OrganisationName;
             organisation.OrganisationLogo = updateDto.OrganisationLogo;
@@ -182,7 +182,7 @@ namespace ExcursionSaaS.Application.Services
             var organisation = await _organisationRepository.GetOrganisationByIdAsync(id)
                 ?? throw new KeyNotFoundException("Organisation not found");
 
-            EnsureCanMenage(organisation, requesterId, requesterRole);
+            EnsureCanManage(organisation, requesterId, requesterRole);
 
             _organisationRepository.Remove(organisation);
             await _organisationRepository.SaveChangesAsync();
@@ -193,7 +193,7 @@ namespace ExcursionSaaS.Application.Services
             var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
                 ?? throw new KeyNotFoundException("Organisation not found");
 
-            EnsureCanMenage(organisation, requesterId, requesterRole);
+            EnsureCanManage(organisation, requesterId, requesterRole);
 
             if (memberToRemoveId == requesterId)
                 throw new InvalidOperationException("You cannot remove yourself from the organisation.");
@@ -213,7 +213,7 @@ namespace ExcursionSaaS.Application.Services
             var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
                 ?? throw new KeyNotFoundException("Organisation not found");
 
-            EnsureCanMenage(organisation, requesterId, requesterRole);
+            EnsureCanManage(organisation, requesterId, requesterRole);
 
             if (newOwnerId == organisation.OwnerId)
                 throw new InvalidOperationException("The new owner is already the owner of the organisation.");
@@ -244,7 +244,7 @@ namespace ExcursionSaaS.Application.Services
             }
         }
 
-        private static void EnsureCanMenage(Organisation organisation, int requesterId, Roles requesterRole)
+        private static void EnsureCanManage(Organisation organisation, int requesterId, Roles requesterRole)
         {
             if (requesterRole == Roles.Admin)
                 return; // Admin can manage any organisation

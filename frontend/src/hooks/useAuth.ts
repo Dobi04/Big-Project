@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { apiClient } from '../api/client';
 
 function getStoredUsername() {
   return localStorage.getItem('username') || '';
@@ -12,7 +13,7 @@ export function useAuth() {
   const [username, setUsername] = useState(getStoredUsername);
   const [role, setRole] = useState(getStoredRole);
 
-  const isLogedIn = Boolean(localStorage.getItem('authToken')) && Boolean(localStorage.getItem('username'));
+  const isLogedIn = Boolean(username);
 
   const refresh = useCallback(() => {
     setUsername(getStoredUsername());

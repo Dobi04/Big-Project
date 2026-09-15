@@ -3,11 +3,13 @@ using ExcursionSaaS.Application.Interfaces.Organisations;
 using ExcursionSaaS.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 namespace ExcursionSaaS.API.Controllers
 {
     [ApiController]
+    [EnableRateLimiting("auth")]
     [Route("api/[controller]")]
     public class OrganisationControler : ControllerBase
     {

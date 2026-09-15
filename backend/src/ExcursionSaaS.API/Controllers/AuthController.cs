@@ -9,6 +9,7 @@ using System.Data;
 namespace ExcursionSaaS.API.Controllers
 {
     [ApiController]
+    [EnableRateLimiting("auth")]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
@@ -23,7 +24,6 @@ namespace ExcursionSaaS.API.Controllers
 
         #region Authentication Endpoints
         [HttpPost("register")]
-        [EnableRateLimiting("auth")]
         public async Task<IActionResult> Register(RegistrationDTO dto)
         {
             try
@@ -46,12 +46,13 @@ namespace ExcursionSaaS.API.Controllers
         }
 
         [HttpPost("login")]
-        [EnableRateLimiting("auth")]
         public async Task<IActionResult> Login(LogInDTO dto)
         {
             try
             {
                 var result = await _authService.LoginAsync(dto);
+                SetAuthCookie(result.Token);
+                result.Token = string.Empty;
                 return Ok(result);
             }
             catch (UnauthorizedAccessException ex)
@@ -60,13 +61,21 @@ namespace ExcursionSaaS.API.Controllers
             }
         }
 
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("authToken");
+            return Ok(new { message = "Logged out successfully." });
+        }
+
         [HttpPost("verify-email")]
-        [EnableRateLimiting("auth")]
         public async Task<IActionResult> VerifyEmail(VerifyEmailDto dto)
         {
             try
             {
                 var result = await _authService.VerifyEmailAsync(dto);
+                SetAuthCookie(result.Token);
+                result.Token = string.Empty;
                 return Ok(result);
             }
             catch (InvalidOperationException ex)
@@ -78,7 +87,6 @@ namespace ExcursionSaaS.API.Controllers
         }
 
         [HttpPost("resend-code")]
-        [EnableRateLimiting("auth")]
         public async Task<IActionResult> ResendCode(ResendVerificationCodeDTO dto)
         {
             try
@@ -92,6 +100,20 @@ namespace ExcursionSaaS.API.Controllers
                     return BadRequest(new { message = ex.Message });
                 }
             }
+        }
+        #endregion
+
+        #region Helpers
+        private void SetAuthCookie(string token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddHours(1)
+            };
+            Response.Cookies.Append("authToken", token, cookieOptions);
         }
         #endregion
     }

@@ -9,7 +9,7 @@ export function RequireAuth() {
   const { isLogedIn, role } = useAuth();
   const normalizedRole = normalizeRole(role);
 
-  if (!isLogedIn || !['user', 'admin'].includes(normalizedRole)) {
+  if (!isLogedIn || !['user', 'admin', 'owner'].includes(normalizedRole)) {
     return <Navigate to="/" replace />;
   }
 

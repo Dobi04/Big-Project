@@ -101,7 +101,6 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
       };
 
       const response = await apiClient.post('/api/Auth/login', payload);
-      localStorage.setItem('authToken', response.data.token);
       localStorage.setItem('username', response.data.username || form.username);
       localStorage.setItem('role', response.data.role || 'User');
       setSuccess('Login successful.');
@@ -135,7 +134,6 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
         code: verificationCode,
       });
 
-      localStorage.setItem('authToken', response.data.token);
       localStorage.setItem('username', response.data.username);
       localStorage.setItem('role', response.data.role);
 

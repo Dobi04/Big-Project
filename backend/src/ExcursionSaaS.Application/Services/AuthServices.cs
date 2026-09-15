@@ -128,7 +128,7 @@ public class AuthServices : IAuthServices
             $"<p>Tvoj novi verifikacioni kod je: <b>{code}</b></p>" +
             $"<p>Kod važi {VerificationCodeValidityMinutes} minuta.</p>");
 
-        return new MessageResponseDTO { Message = "If the email exists, a new code has been sent." };
+        return new MessageResponseDTO { Message = "A new code has been sent." };
     }
 
     public async Task<AuthResponseDTO> VerifyEmailAsync(VerifyEmailDto dto)
