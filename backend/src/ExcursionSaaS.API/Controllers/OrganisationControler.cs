@@ -34,6 +34,7 @@ namespace ExcursionSaaS.API.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetOrganisationById(int id)
         {
             try

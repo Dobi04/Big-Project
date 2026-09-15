@@ -66,9 +66,12 @@ namespace ExcursionSaaS.Application.Services
         {
             var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
                 ?? throw new KeyNotFoundException("Organisation not found");
-            if (organisation.Visibility != OrganisationVisibility.Public && organisation.OwnerId != requesterId)
+
+            var isMember = organisation.OwnerId == requesterId || organisation.Members.Any(m => m.MemberId == requesterId);
+
+            if (organisation.Visibility != OrganisationVisibility.Public && !isMember)
                 throw new UnauthorizedAccessException("You are not authorized to view this organisation.");
-            if (organisation.Status != OrganisationStatus.Active)
+            if (organisation.Status != OrganisationStatus.Active && organisation.OwnerId != requesterId)
                 throw new InvalidOperationException("This organisation is not active.");
 
             return ToDetailsDTO(organisation);
@@ -79,7 +82,7 @@ namespace ExcursionSaaS.Application.Services
             var organisation = await _organisationRepository.GetOrganisationByIdAsync(organisationId)
                 ?? throw new KeyNotFoundException("Organisation not found");
 
-            if(organisation.Visibility != OrganisationVisibility.Private)
+            if(organisation.Visibility == OrganisationVisibility.Private)   //will need a check for invitation in the future
                 throw new UnauthorizedAccessException("You cannot join a private organisation without an invitation.");
             if(organisation.Status != OrganisationStatus.Active)
                 throw new InvalidOperationException("You cannot join an organisation that is not active.");
@@ -107,7 +110,7 @@ namespace ExcursionSaaS.Application.Services
 
             var membership = organisation.Members.FirstOrDefault(m => m.MemberId == requesterId);
             if (membership == null)
-                throw new InvalidOperationException("You are not a member of this organisation.");
+                throw new KeyNotFoundException("You are not a member of this organisation.");
 
             if (organisation.OwnerId == requesterId)
                 throw new InvalidOperationException("The owner cannot leave the organisation. Consider transferring ownership or deleting the organisation.");
@@ -211,9 +214,6 @@ namespace ExcursionSaaS.Application.Services
                 ?? throw new KeyNotFoundException("Organisation not found");
 
             EnsureCanMenage(organisation, requesterId, requesterRole);
-            
-            if (organisation.OwnerId != requesterId)
-                throw new UnauthorizedAccessException("Only the current owner can transfer ownership.");
             
             var newOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == newOwnerId);
             if (newOwnerMembership == null)
