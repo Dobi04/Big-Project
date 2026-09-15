@@ -13,15 +13,20 @@ export function useAuth() {
   const [username, setUsername] = useState(getStoredUsername);
   const [role, setRole] = useState(getStoredRole);
 
-  const isLogedIn = Boolean(username);
+  const isLogedIn = Boolean(username && role);
 
   const refresh = useCallback(() => {
     setUsername(getStoredUsername());
     setRole(getStoredRole());
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('authToken');
+  const logout = useCallback(async() => {
+    try
+    {
+      await apiClient.post('/api/Auth/logout');
+    } catch {
+    
+    }
     localStorage.removeItem('username');
     localStorage.removeItem('role');
     setUsername('');
