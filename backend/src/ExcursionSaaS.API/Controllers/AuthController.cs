@@ -74,6 +74,7 @@ namespace ExcursionSaaS.API.Controllers
         }
 
         [HttpPost("logout")]
+        [DisableRateLimiting]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("authToken");

@@ -9,7 +9,7 @@ using System.Security.Claims;
 namespace ExcursionSaaS.API.Controllers
 {
     [ApiController]
-    [EnableRateLimiting("auth")]
+    [EnableRateLimiting("api")]
     [Route("api/[controller]")]
     public class OrganisationControler : ControllerBase
     {
