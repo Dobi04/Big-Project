@@ -26,7 +26,7 @@ namespace ExcursionSaaS.API.Controllers
 
         #region Authentication Endpoints
         [HttpGet("me")]
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult Me()
         {
             var username = User.FindFirstValue(ClaimTypes.Name);

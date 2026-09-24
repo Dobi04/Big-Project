@@ -22,16 +22,25 @@ namespace ExcursionSaaS.Infrastructure
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("DefaultConnection is not configured.");
 
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 0))));
+            services.AddDbContext<AppDbContext>((serviceProvider, options) =>
+            {
+                options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 0)));
+                options.AddInterceptors(serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
+            });
+            
+            services.AddScoped<AuditSaveChangesInterceptor>();
 
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IOrganisationRepository, OrganisationRepository>();
             services.AddScoped<IEmailSender, SmtpEmailSender>();
 
+            services.AddScoped<IOrganisationRepository, OrganisationRepository>();
+
+
             services.AddScoped<INotificationRepository, NotificationRepository>();
+
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
             return services;
         }

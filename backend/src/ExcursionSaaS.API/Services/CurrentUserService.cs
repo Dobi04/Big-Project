@@ -1,4 +1,4 @@
-﻿using ExcursionSaaS.Application.Services;
+﻿using ExcursionSaaS.Application.Interfaces;
 using System.Security.Claims;
 
 namespace ExcursionSaaS.API.Services

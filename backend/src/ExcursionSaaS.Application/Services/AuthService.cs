@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ExcursionSaaS.Application.Services;
 
-public class AuthServices : IAuthServices
+public class AuthService : IAuthServices
 {
     #region Constants and Constructors
     private const int VerificationCodeValidityMinutes = 5;
@@ -20,7 +20,7 @@ public class AuthServices : IAuthServices
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEmailSender _emailSender;
 
-    public AuthServices(
+    public AuthService(
         IUserRepository userRepository,
         IJwtTokenGenerator jwtTokenGenerator,
         IPasswordHasher passwordHasher,
