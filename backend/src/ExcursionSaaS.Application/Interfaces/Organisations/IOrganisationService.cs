@@ -1,3 +1,4 @@
+using ExcursionSaaS.Application.DTOs.Common;
 using ExcursionSaaS.Application.DTOs.OrganisationDTOs;
 using ExcursionSaaS.Domain.Entities;
 using ExcursionSaaS.Domain.Enums.Users;
@@ -8,6 +9,7 @@ public interface IOrganisationService
 {
     #region Query Methods
     Task<List<OrganisationSummaryDTO>> GetTopOrganisationsAsync(double? latitude, double? longitude, int count = 10);
+    Task<PagedResponseDTO<OrganisationSummaryDTO>> GetOrganisationsAsync(OrganisationFilterDTO filter);
     Task<OrganisationDetailsDTO> GetOrganisationByIdAsync(int organisationId, int requesterId);
     Task<List<JoinedOrganisationDTO>> GetJoinedOrganisationsAsync(int requesterId);
     #endregion

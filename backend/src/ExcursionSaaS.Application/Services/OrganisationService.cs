@@ -4,6 +4,7 @@ using ExcursionSaaS.Application.Interfaces.Organisations;
 using ExcursionSaaS.Domain.Enums.Users;
 using ExcursionSaaS.Domain.Entities;
 using ExcursionSaaS.Domain.Enums.Organisations;
+using ExcursionSaaS.Application.DTOs.Common;
 
 namespace ExcursionSaaS.Application.Services
 {
@@ -91,6 +92,10 @@ namespace ExcursionSaaS.Application.Services
             if (alreadyMember)
                 throw new InvalidOperationException("You are already a member of this organisation.");
 
+            var payementStatus = organisation.SubscriptionType == OrganisationSubscriptionType.Free
+                ? MemberSubscriptionStatus.Free
+                : MemberSubscriptionStatus.PendingPayment;
+
             await _organisationRepository.AddMemberAsync(new OrganisationMember
             {
                 OrganisationId = organisationId,
@@ -118,6 +123,23 @@ namespace ExcursionSaaS.Application.Services
 
             _organisationRepository.RemoveMember(membership);
             await _organisationRepository.SaveChangesAsync();
+        }
+
+        public async Task<PagedResponseDTO<OrganisationSummaryDTO>> GetOrganisationsAsync(OrganisationFilterDTO filter)
+        {
+            var page = Math.Max(filter.Page, 1);
+            var pageSize = filter.PageSize <= 0 ? 20 : Math.Clamp(filter.PageSize, 1, 100);
+
+            var result = await _organisationRepository.GetPagedAsync(filter.Search, filter.Type, page, pageSize);
+
+            return new PagedResponseDTO<OrganisationSummaryDTO>
+            {
+                Items = result.Items.Select(o => ToSummaryDTO(o, distanceKm: null)).ToList(),
+                TotalCount = result.TotalCount,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = result.TotalCount == 0 ? 0 : (int)Math.Ceiling(result.TotalCount / (double)pageSize)
+            };
         }
         #endregion
 
@@ -325,7 +347,6 @@ namespace ExcursionSaaS.Application.Services
                 CreatedAt = organisation.CreatedAt
             };
         }
-
         #endregion
     }
 }

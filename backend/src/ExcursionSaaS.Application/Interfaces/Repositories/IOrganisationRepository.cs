@@ -9,6 +9,7 @@ public interface IOrganisationRepository
     Task<List<Organisation>> GetTopByPopularityAsync(int count);
     Task<List<Organisation>> GetPublicActiveByCordinatesAsync();
     Task<List<OrganisationMember>> GetMembershipsByUserAsync(int memberId);
+    Task<(List<Organisation> Items, int TotalCount)> GetPagedAsync(string? search, string? type, int page, int pageSize);
     #endregion
 
     #region Command Methods

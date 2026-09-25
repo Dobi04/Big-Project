@@ -40,6 +40,40 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
             return organisation;
         }
 
+        public async Task<(List<Organisation> Items, int TotalCount)> GetPagedAsync(string? search, string? type, int page, int pageSize)
+        {
+            var query = BuildPublicActiveQuery(search, type);
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(o => o.AverageRating)
+                .ThenBy(o => o.OrganisationName)
+                .Skip((page-1)* pageSize)
+                .Take(pageSize)
+                .Include(o => o.Owner)
+                .Include(o => o.Members)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
+        private IQueryable<Organisation> BuildPublicActiveQuery(string? search, string? type)
+        {
+            var query = _appDbContext.Organisations
+                .Where(o => o.Visibility == OrganisationVisibility.Public
+                    && o.Status == OrganisationStatus.Active)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(o => o.OrganisationName.Contains(search));
+
+            if (!string.IsNullOrWhiteSpace(type))
+                query = query.Where(o => o.Type == type);
+
+            return query;
+        }
+
         public Task<List<Organisation>> GetPublicActiveByCordinatesAsync()
         {
             var topOrganisations = _appDbContext.Organisations

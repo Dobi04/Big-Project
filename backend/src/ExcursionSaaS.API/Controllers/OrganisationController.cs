@@ -23,6 +23,13 @@ namespace ExcursionSaaS.API.Controllers
         #endregion
 
         #region Organisation Endpoints
+        [HttpGet]
+        public async Task<IActionResult> GetOrganisatnions([FromQuery] OrganisationFilterDTO filter)
+        {
+            var organisations = await _organisationService.GetOrganisationsAsync(filter);
+            return Ok(organisations);
+        }
+
         [HttpGet("top")]
         public async Task<IActionResult> GetTopOrganisations([FromQuery] double? latitude, [FromQuery] double? longitude, [FromQuery] int count = 10)
         {
