@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '../api/client';
 
 function getStoredUsername() {
@@ -20,6 +20,16 @@ export function useAuth() {
     setRole(getStoredRole());
   }, []);
 
+  useEffect(() => {
+    window.addEventListener('auth:changed', refresh);
+    window.addEventListener('storage', refresh);
+
+    return () => {
+      window.removeEventListener('auth:changed', refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, [refresh]);
+
   const logout = useCallback(async() => {
     try
     {
@@ -31,6 +41,7 @@ export function useAuth() {
     localStorage.removeItem('role');
     setUsername('');
     setRole('User');
+    window.dispatchEvent(new Event('auth:changed'));
   }, []);
 
   return { username, role, isLogedIn, refresh, logout };
