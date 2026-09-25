@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
 using System.Threading.RateLimiting;
+using Microsoft.Extensions.DependencyInjection;
 
 #region Builder Setup
 var builder = WebApplication.CreateBuilder(args);
