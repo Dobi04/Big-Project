@@ -7,6 +7,7 @@ public interface IUserRepository
     #region Query Methods
     Task<User?> FindByUsernameAsync(string username);
     Task<User?> FindByEmailAsync(string email);
+    Task<User?> FindByIdAsync(int id);
     Task<PendingUserRegistration?> FindPendingByUsernameAsync(string username);
     Task<PendingUserRegistration?> FindPendingByEmailAsync(string email);
     #endregion

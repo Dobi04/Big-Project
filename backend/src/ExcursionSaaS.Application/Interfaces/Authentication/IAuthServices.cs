@@ -10,5 +10,6 @@ public interface IAuthServices
     Task<AuthResponseDTO> LoginAsync(LogInDTO dto);
     Task<AuthResponseDTO> VerifyEmailAsync(VerifyEmailDto dto);
     Task<MessageResponseDTO> ResendVerificationCodeAsync(ResendVerificationCodeDTO dto);
+    Task<AuthResponseDTO> ChangeRoleAsync(int userId, string role);
     #endregion
 }

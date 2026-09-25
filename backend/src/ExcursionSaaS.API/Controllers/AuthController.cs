@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 namespace ExcursionSaaS.API.Controllers
@@ -79,6 +80,29 @@ namespace ExcursionSaaS.API.Controllers
         {
             Response.Cookies.Delete("authToken");
             return Ok(new { message = "Logged out successfully." });
+        }
+
+        [HttpPost("change-role")]
+        [Authorize]
+        public async Task<ActionResult> ChangeRole(ChangeRoleDTO dto)
+        {
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
+                    ?? throw new UnauthorizedAccessException("User ID claim not found"));
+                var result = await _authService.ChangeRoleAsync(userId, dto.Role);
+                SetAuthCookie(result.Token);
+                result.Token = string.Empty;
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
         [HttpPost("verify-email")]

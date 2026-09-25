@@ -35,5 +35,7 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
         }
 
         public async Task SaveChangesAsync() => await _appDbContext.SaveChangesAsync();
+
+        public async Task<User?> FindByIdAsync(int id) => await _appDbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 }

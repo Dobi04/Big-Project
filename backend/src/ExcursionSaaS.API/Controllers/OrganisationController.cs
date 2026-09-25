@@ -11,12 +11,12 @@ namespace ExcursionSaaS.API.Controllers
     [ApiController]
     [EnableRateLimiting("api")]
     [Route("api/[controller]")]
-    public class OrganisationControler : ControllerBase
+    public class OrganisationController : ControllerBase
     {
         #region Constants and Constructors
         private readonly IOrganisationService _organisationService;
 
-        public OrganisationControler(IOrganisationService organisationService)
+        public OrganisationController(IOrganisationService organisationService)
         {
             _organisationService = organisationService;
         }

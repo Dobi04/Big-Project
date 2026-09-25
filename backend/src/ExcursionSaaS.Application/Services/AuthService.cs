@@ -5,6 +5,7 @@ using ExcursionSaaS.Application.Interfaces.Communication;
 using ExcursionSaaS.Application.Interfaces.Repositories;
 using ExcursionSaaS.Application.Interfaces.Security;
 using ExcursionSaaS.Domain.Entities;
+using ExcursionSaaS.Domain.Enums.Users;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -104,6 +105,27 @@ public class AuthService : IAuthServices
         return new MessageResponseDTO
         {
             Message = "Registration successful. Please check your email for the verification code."
+        };
+    }
+    #endregion
+
+    #region Role switching
+    public async Task<AuthResponseDTO> ChangeRoleAsync(int userId, string role)
+    {
+        var user = await _userRepository.FindByIdAsync(userId)
+            ?? throw new InvalidOperationException("User not found");
+
+        if (!Enum.TryParse<Roles>(role, ignoreCase: true, out var parsedRole))
+            throw new InvalidOperationException("invalid role value, this role does not exist");
+
+        user.Role = parsedRole;
+        await _userRepository.SaveChangesAsync();
+
+        return new AuthResponseDTO
+        {
+            Token = _jwtTokenGenerator.GenerateToken(user),
+            Username = user.Username,
+            Role = user.Role.ToString()
         };
     }
     #endregion
