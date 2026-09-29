@@ -92,7 +92,7 @@ namespace ExcursionSaaS.Application.Services
             if (alreadyMember)
                 throw new InvalidOperationException("You are already a member of this organisation.");
 
-            var payementStatus = organisation.SubscriptionType == OrganisationSubscriptionType.Free
+            var paymentStatus = organisation.SubscriptionType == OrganisationSubscriptionType.Free
                 ? MemberSubscriptionStatus.Free
                 : MemberSubscriptionStatus.PendingPayment;
 
@@ -101,7 +101,7 @@ namespace ExcursionSaaS.Application.Services
                 OrganisationId = organisationId,
                 MemberId = requesterId,
                 Role = OrganisationMemberRole.Participant,
-                PaymentStatus = MemberSubscriptionStatus.PendingPayment,
+                PaymentStatus = paymentStatus,
                 JoinedAt = DateTime.UtcNow
             });
 
