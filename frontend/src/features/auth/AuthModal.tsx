@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '../../api/client';
+import { getErrorMessage } from '../../lib/http';
 
 type AuthMode = 'signin' | 'login';
 
@@ -113,11 +114,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
       });
       onAuthSuccess?.();
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object'
-          ? (err.response as { data?: { message?: string } }).data?.message || 'Something went wrong.'
-          : 'Something went wrong.';
-      setError(message);
+      setError(getErrorMessage(err, 'Something went wrong.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -140,11 +137,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
       setStep('success');
       onAuthSuccess?.();
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object'
-          ? (err.response as { data?: { message?: string } }).data?.message || 'Something went wrong.'
-          : 'Something went wrong.';
-      setError(message);
+      setError(getErrorMessage(err, 'Something went wrong.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -192,7 +185,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                 }`}
                 onClick={() => onModeChange('signin')}
               >
-                Sign in
+                Register
               </button>
               <button
                 type="button"
@@ -241,6 +234,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                   value={form.username}
                   onChange={handleChange}
                   required
+                  minLength={mode === 'signin' ? 8 : undefined}
                   className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-violet-400"
                   placeholder="username"
                 />
@@ -301,9 +295,11 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                 <input
                   name="code"
                   value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
+                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
                   required
                   maxLength={6}
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
                   className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-center text-lg tracking-widest text-white outline-none focus:border-violet-400"
                   placeholder="XXX XXX"
                 />
