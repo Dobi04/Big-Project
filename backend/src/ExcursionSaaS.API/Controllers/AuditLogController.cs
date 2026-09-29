@@ -14,9 +14,9 @@ namespace ExcursionSaaS.API.Controllers
     [Route("api/[controller]")]
     public class AuditLogController : ControllerBase
     {
-        private readonly AuditLogService _auditLogService;
+        private readonly IAuditLogService _auditLogService;
 
-        public AuditLogController(AuditLogService auditLogService)
+        public AuditLogController(IAuditLogService auditLogService)
         {
             _auditLogService = auditLogService;
         }

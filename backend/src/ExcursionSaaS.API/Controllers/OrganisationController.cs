@@ -55,6 +55,14 @@ namespace ExcursionSaaS.API.Controllers
             {
                 return NotFound(new { message = ex.Message });
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpGet("joined")]
@@ -76,7 +84,7 @@ namespace ExcursionSaaS.API.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {
@@ -99,7 +107,7 @@ namespace ExcursionSaaS.API.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {
@@ -122,7 +130,7 @@ namespace ExcursionSaaS.API.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
         }
 
@@ -141,7 +149,7 @@ namespace ExcursionSaaS.API.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
@@ -164,7 +172,7 @@ namespace ExcursionSaaS.API.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
@@ -187,7 +195,7 @@ namespace ExcursionSaaS.API.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
@@ -210,7 +218,7 @@ namespace ExcursionSaaS.API.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
