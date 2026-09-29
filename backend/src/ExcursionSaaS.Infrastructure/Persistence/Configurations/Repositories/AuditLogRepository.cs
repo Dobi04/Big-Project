@@ -63,10 +63,10 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
                 query = query.Where(auditLog => auditLog.Action == action.Value);
 
             if (dateFrom.HasValue)
-                query = query.Where(auditLog => auditLog.Timestamp > dateFrom.Value);
+                query = query.Where(auditLog => auditLog.Timestamp >= dateFrom.Value.Date);
 
             if (dateTo.HasValue)
-                query = query.Where(auditLog => auditLog.Timestamp < dateTo.Value);
+                query = query.Where(auditLog => auditLog.Timestamp < dateTo.Value.Date.AddDays(1));
 
             return query;
         }
