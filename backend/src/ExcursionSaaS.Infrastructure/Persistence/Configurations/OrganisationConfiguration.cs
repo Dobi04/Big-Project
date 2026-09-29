@@ -21,17 +21,16 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
             builder.Property(o => o.OrganisationLogo).HasMaxLength(500);
             builder.Property(o => o.Type).IsRequired().HasMaxLength(50).HasDefaultValue("NoneAdded");
 
+            // Keep enum defaults in the entity; database defaults can make CLR-default enum values look unset to EF.
             builder.Property(o => o.Visibility)
                 .HasConversion<string>()
                 .HasMaxLength(20)
-                .IsRequired()
-                .HasDefaultValue(OrganisationVisibility.Private);
+                .IsRequired();
 
             builder.Property(o => o.Status)
                 .HasConversion<string>()
                 .HasMaxLength(20)
-                .IsRequired()
-                .HasDefaultValue(OrganisationStatus.Active);
+                .IsRequired();
 
             builder.Property(o => o.SubscriptionType)
                 .HasConversion<string>()

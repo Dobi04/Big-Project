@@ -16,11 +16,11 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
 
             builder.HasKey(n => n.Id);
 
+            // Keep enum defaults in the entity; database defaults can make CLR-default enum values look unset to EF.
             builder.Property(n => n.Type)
                 .HasConversion<string>()
                 .HasMaxLength(50)
-                .IsRequired()
-                .HasDefaultValue(NotificationType.General);
+                .IsRequired();
 
             builder.Property(n => n.Message).HasMaxLength(500).IsRequired();
             builder.Property(n => n.IsRead).IsRequired().HasDefaultValue(false);
