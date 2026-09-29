@@ -30,9 +30,12 @@ export default function OrganisationDetailsPage() {
     try {
       await joinOrganisation(id);
       if (organisation.subscriptionType === 'Free') navigate(`/organisations/${id}/workspace`);
-      else setMessage('Zahtev za clanstvo je poslat. Ceka se odobrenje.');
+      else {
+        setOrganisation({ ...organisation, isMember: true });
+        setMessage('You joined. Payment is pending.');
+      }
     } catch (requestError) {
-      setError(getErrorMessage(requestError, 'Failed to join organisation.'));
+      setJoinError(getErrorMessage(requestError, 'Failed to join organisation.'));
     } finally {
       setIsJoining(false);
     }
@@ -50,7 +53,11 @@ export default function OrganisationDetailsPage() {
           {organisation.organisationLogo && <img src={organisation.organisationLogo} alt="" className="h-14 w-14 rounded-2xl object-cover" />}
           <div><h1 className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{organisation.organisationName}</h1><p className={`mt-1 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{organisation.organisationDescription || 'No description available.'}</p></div>
         </div>
-        <button type="button" onClick={handleJoin} disabled={isJoining} className="mt-5 w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{isJoining ? 'Joining...' : 'Join Organisation'}</button>
+        {organisation.isMember ? (
+          <button type="button" onClick={() => navigate(`/organisations/${id}/workspace`)} className="mt-5 w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white">Open workspace</button>
+        ) : (
+          <button type="button" onClick={handleJoin} disabled={isJoining} className="mt-5 w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{isJoining ? 'Joining...' : 'Join Organisation'}</button>
+        )}
         {joinError && <p className="mt-3 rounded-2xl bg-rose-50 p-3 text-sm text-rose-700">{joinError}</p>}
         {message && <p className={`mt-3 rounded-2xl p-3 text-sm ${isDark ? 'bg-emerald-500/15 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>{message}</p>}
       </div>

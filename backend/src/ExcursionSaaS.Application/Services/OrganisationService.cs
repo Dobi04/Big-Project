@@ -75,7 +75,7 @@ namespace ExcursionSaaS.Application.Services
             if (organisation.Status != OrganisationStatus.Active && organisation.OwnerId != requesterId)
                 throw new InvalidOperationException("This organisation is not active.");
 
-            return ToDetailsDTO(organisation);
+            return ToDetailsDTO(organisation, requesterId);
         }
 
         public async Task JoinOrganisationAsync(int organisationId, int requesterId)
@@ -352,7 +352,7 @@ namespace ExcursionSaaS.Application.Services
                 DistanceKm = distanceKm
             };
         }
-        private static OrganisationDetailsDTO ToDetailsDTO(Organisation organisation)
+        private static OrganisationDetailsDTO ToDetailsDTO(Organisation organisation, int requesterId)
         {
             return new OrganisationDetailsDTO
             {
@@ -361,6 +361,7 @@ namespace ExcursionSaaS.Application.Services
                 OrganisationLogo = organisation.OrganisationLogo,
                 OrganisationDescription = organisation.OrganisationDescription,
                 OwnerId = organisation.OwnerId,
+                IsMember = organisation.OwnerId == requesterId || organisation.Members.Any(m => m.MemberId == requesterId),
                 OwnerUsername = organisation.Owner.Username,
                 Visibility = organisation.Visibility.ToString(),
                 Status = organisation.Status.ToString(),

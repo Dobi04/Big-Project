@@ -3,7 +3,7 @@ export type AuditLogEntry = {
   entityName: string;
   entityId: string;
   action: number;
-  userId: string;
+  userId: number;
   username: string;
   timestamp: string;
   oldValues: string | null;

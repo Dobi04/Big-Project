@@ -16,7 +16,8 @@ export type OrganisationDetails = {
   organisationName: string;
   organisationLogo: string | null;
   organisationDescription: string | null;
-  ownerId: string;
+  ownerId: number;
+  isMember: boolean;
   ownerUsername: string;
   visibility: string;
   status: string;
