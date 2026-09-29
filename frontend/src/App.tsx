@@ -3,7 +3,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import { RequireAdmin, RequireAuth } from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
-import ExcursionsPage from './pages/ExcursionsPage';
+import OrganisationsPage from './pages/OrganisationsPage';
+import OrganisationDetailsPage from './pages/OrganisationDetailsPage';
+import OrganisationWorkspacePage from './pages/OrganisationWorkspacePage';
+import MyOrganisationsPage from './pages/MyOrganisationsPage';
 import TrackingPage from './pages/TrackingPage';
 import PaymentsPage from './pages/PaymentsPage';
 import AdminPage from './pages/AdminPage';
@@ -28,9 +31,12 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/organisations" element={<OrganisationsPage />} />
 
           <Route element={<RequireAuth />}>
-            <Route path="/excursions" element={<ExcursionsPage />} />
+            <Route path="/organisations/:id" element={<OrganisationDetailsPage />} />
+            <Route path="/organisations/:id/workspace" element={<OrganisationWorkspacePage />} />
+            <Route path="/my-organisations" element={<MyOrganisationsPage />} />
             <Route path="/tracking" element={<TrackingPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
           </Route>

@@ -6,7 +6,8 @@ export type NavItem = {
 
 export const navItems: NavItem[] = [
   { label: 'Home', icon: '⌂', to: '/' },
-  { label: 'Excursions', icon: '🗺️', to: '/excursions' },
+  { label: 'Organisations', icon: '🏷️', to: '/organisations' },
+  { label: 'My Organisations', icon: '⭐', to: '/my-organisations' },
   { label: 'Tracking', icon: '📍', to: '/tracking' },
   { label: 'Payments', icon: '💳', to: '/payments' },
   { label: 'Admin', icon: '⚙️', to: '/admin' },
