@@ -147,32 +147,34 @@ namespace ExcursionSaaS.Application.Services
         public async Task<OrganisationDetailsDTO> CreateOrganisationAsync(CreateOrganisationDTO createDto, int requesterId, Roles requesterRole)
         {
             EnsureCanCreate(requesterRole);
+            var visibility = ParseVisibility(createDto.Visibility);
+            var subscriptionType = ParseSubscriptionType(createDto.SubscriptionType);
+            ValidatePricing(subscriptionType, createDto.MonthlyPrice, createDto.YearlyPrice);
+
             var organisation = new Organisation
             {
                 OrganisationName = createDto.OrganisationName,
                 OrganisationLogo = createDto.OrganisationLogo,
                 OrganisationDescription = createDto.OrganisationDescription,
                 OwnerId = requesterId,
-                Visibility = ParseVisibility(createDto.Visibility),
+                Visibility = visibility,
                 Type = string.IsNullOrWhiteSpace(createDto.Type) ? "NoneAdded" : createDto.Type,
-                SubscriptionType = ParseSubscriptionType(createDto.SubscriptionType),
+                SubscriptionType = subscriptionType,
                 MonthlyPrice = createDto.MonthlyPrice,
                 YearlyPrice = createDto.YearlyPrice,
                 Latitude = createDto.Latitude,
                 Longitude = createDto.Longitude,
             };
 
-            await _organisationRepository.AddAsync(organisation);
-            await _organisationRepository.SaveChangesAsync();
-
-            await _organisationRepository.AddMemberAsync(new OrganisationMember
+            organisation.Members.Add(new OrganisationMember
             {
-                OrganisationId = organisation.Id,
                 MemberId = requesterId,
                 Role = OrganisationMemberRole.Owner,
                 PaymentStatus = MemberSubscriptionStatus.Paid,
                 JoinedAt = DateTime.UtcNow
             });
+
+            await _organisationRepository.AddAsync(organisation);
             await _organisationRepository.SaveChangesAsync();
 
             return await GetOrganisationByIdAsync(organisation.Id, requesterId);
@@ -185,12 +187,16 @@ namespace ExcursionSaaS.Application.Services
 
             EnsureCanManage(organisation, requesterId, requesterRole);
 
+            var visibility = ParseVisibility(updateDto.Visibility);
+            var subscriptionType = ParseSubscriptionType(updateDto.SubscriptionType);
+            ValidatePricing(subscriptionType, updateDto.MonthlyPrice, updateDto.YearlyPrice);
+
             organisation.OrganisationName = updateDto.OrganisationName;
             organisation.OrganisationLogo = updateDto.OrganisationLogo;
             organisation.OrganisationDescription = updateDto.OrganisationDescription;
-            organisation.Visibility = ParseVisibility(updateDto.Visibility);
+            organisation.Visibility = visibility;
             organisation.Type = string.IsNullOrWhiteSpace(updateDto.Type) ? "NoneAdded" : updateDto.Type;
-            organisation.SubscriptionType = ParseSubscriptionType(updateDto.SubscriptionType);
+            organisation.SubscriptionType = subscriptionType;
             organisation.MonthlyPrice = updateDto.MonthlyPrice;
             organisation.YearlyPrice = updateDto.YearlyPrice;
             organisation.Latitude = updateDto.Latitude;
@@ -240,16 +246,16 @@ namespace ExcursionSaaS.Application.Services
             if (newOwnerId == organisation.OwnerId)
                 throw new InvalidOperationException("The new owner is already the owner of the organisation.");
 
+            var newOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == newOwnerId);
+            if (newOwnerMembership == null)
+                throw new InvalidOperationException("The specified user is not a member of this organisation.");
+
             var previousOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == organisation.OwnerId);
             if (previousOwnerMembership != null)
             {
                 previousOwnerMembership.Role = OrganisationMemberRole.Participant;
             }
 
-            var newOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == newOwnerId);
-            if (newOwnerMembership == null)
-                throw new InvalidOperationException("The specified user is not a member of this organisation.");
-            
             organisation.OwnerId = newOwnerId;
             newOwnerMembership.Role = OrganisationMemberRole.Owner;
             
@@ -279,16 +285,39 @@ namespace ExcursionSaaS.Application.Services
 
         private static OrganisationVisibility ParseVisibility(string? visibility)
         {
-            return Enum.TryParse<OrganisationVisibility>(visibility, ignoreCase: true, out var parsed)
-                ? parsed
-                : throw new ArgumentException($"Invalid visibility value: '{visibility}'. Expected 'Public' or 'Private'.");
+            var value = visibility?.Trim();
+            return value != null
+                && Enum.TryParse<OrganisationVisibility>(value, ignoreCase: true, out var parsed)
+                && Enum.IsDefined(parsed)
+                && Enum.GetNames<OrganisationVisibility>().Contains(value, StringComparer.OrdinalIgnoreCase)
+                    ? parsed
+                    : throw new ArgumentException($"Invalid visibility value: '{visibility}'. Expected 'Public' or 'Private'.");
         }
 
         private static OrganisationSubscriptionType ParseSubscriptionType(string? subscriptionType)
         {
-            return Enum.TryParse<OrganisationSubscriptionType>(subscriptionType, ignoreCase: true, out var parsed)
-                ? parsed
-                : throw new ArgumentException($"Invalid subscription type value: '{subscriptionType}'. Expected 'Free', 'Paid', or 'None'.");
+            var value = subscriptionType?.Trim();
+            return value != null
+                && Enum.TryParse<OrganisationSubscriptionType>(value, ignoreCase: true, out var parsed)
+                && Enum.IsDefined(parsed)
+                && Enum.GetNames<OrganisationSubscriptionType>().Contains(value, StringComparer.OrdinalIgnoreCase)
+                    ? parsed
+                    : throw new ArgumentException($"Invalid subscription type value: '{subscriptionType}'. Expected 'Free' or 'Paid'.");
+        }
+
+        private static void ValidatePricing(OrganisationSubscriptionType subscriptionType, decimal? monthlyPrice, decimal? yearlyPrice)
+        {
+            if (subscriptionType == OrganisationSubscriptionType.Paid
+                && monthlyPrice.GetValueOrDefault() <= 0
+                && yearlyPrice.GetValueOrDefault() <= 0)
+            {
+                throw new ArgumentException("Paid organisations must have a monthly or yearly price greater than zero.");
+            }
+
+            if (subscriptionType == OrganisationSubscriptionType.Free && (monthlyPrice.HasValue || yearlyPrice.HasValue))
+            {
+                throw new ArgumentException("Free organisations must not specify monthly or yearly prices.");
+            }
         }
 
         private static double HaversineDistanceKm(double lat1, double lon1, double lat2, double lon2)
