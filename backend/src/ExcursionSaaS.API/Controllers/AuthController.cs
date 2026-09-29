@@ -1,5 +1,6 @@
 ﻿using ExcursionSaaS.Application.DTOs.AuthDTOs;
 using ExcursionSaaS.Application.DTOs.EmailVerificationDTOs;
+using ExcursionSaaS.API.Extensions;
 using ExcursionSaaS.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,7 +51,7 @@ namespace ExcursionSaaS.API.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex) when (GlobalExceptionHandler.IsUniqueConstraintViolation(ex))
             {
                 return Ok(new MessageResponseDTO
                 {
@@ -121,6 +122,10 @@ namespace ExcursionSaaS.API.Controllers
                 {
                     return BadRequest(new { message = ex.Message });
                 }
+            }
+            catch (DbUpdateException ex) when (GlobalExceptionHandler.IsUniqueConstraintViolation(ex))
+            {
+                return BadRequest(new { message = "Registration could not be completed. Please register again." });
             }
         }
 

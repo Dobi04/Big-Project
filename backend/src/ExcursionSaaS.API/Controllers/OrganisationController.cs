@@ -1,9 +1,11 @@
 ﻿using ExcursionSaaS.Application.DTOs.OrganisationDTOs;
+using ExcursionSaaS.API.Extensions;
 using ExcursionSaaS.Application.Interfaces.Organisations;
 using ExcursionSaaS.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace ExcursionSaaS.API.Controllers
@@ -154,6 +156,10 @@ namespace ExcursionSaaS.API.Controllers
             catch (InvalidOperationException ex)
             {
                 return Conflict(new { message = ex.Message });
+            }
+            catch (DbUpdateException ex) when (GlobalExceptionHandler.IsUniqueConstraintViolation(ex))
+            {
+                return Conflict(new { message = "The request conflicts with existing data." });
             }
         }
 

@@ -1,4 +1,5 @@
 using ExcursionSaaS.API.Services;
+using ExcursionSaaS.API.Extensions;
 using ExcursionSaaS.Application;
 using ExcursionSaaS.Application.Interfaces;
 using ExcursionSaaS.Infrastructure;
@@ -14,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -129,6 +132,8 @@ builder.Services.AddRateLimiter(options =>
 
 #region App Pipeline
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
