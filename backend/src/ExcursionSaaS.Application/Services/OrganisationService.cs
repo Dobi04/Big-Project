@@ -280,7 +280,7 @@ namespace ExcursionSaaS.Application.Services
             if (organisation.OwnerId == requesterId)
                 return; // Owner can manage their own organisation
 
-            throw new UnauthorizedAccessException("Only Admins and Owners can perform this action on.");
+            throw new UnauthorizedAccessException("Only administrators and organisation owners can perform this action.");
         }
 
         private static OrganisationVisibility ParseVisibility(string? visibility)

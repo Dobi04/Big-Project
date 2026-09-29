@@ -93,7 +93,7 @@ namespace ExcursionSaaS.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = "Admin,Owner")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrganisation(int id, UpdateOrganisationDTO updateDto)
         {
             try
