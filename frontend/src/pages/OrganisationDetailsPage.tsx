@@ -15,6 +15,7 @@ export default function OrganisationDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [joinError, setJoinError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function OrganisationDetailsPage() {
     if (!organisation) return;
     setIsJoining(true);
     setMessage(null);
+    setJoinError(null);
     try {
       await joinOrganisation(id);
       if (organisation.subscriptionType === 'Free') navigate(`/organisations/${id}/workspace`);
@@ -49,6 +51,7 @@ export default function OrganisationDetailsPage() {
           <div><h1 className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{organisation.organisationName}</h1><p className={`mt-1 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{organisation.organisationDescription || 'No description available.'}</p></div>
         </div>
         <button type="button" onClick={handleJoin} disabled={isJoining} className="mt-5 w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{isJoining ? 'Joining...' : 'Join Organisation'}</button>
+        {joinError && <p className="mt-3 rounded-2xl bg-rose-50 p-3 text-sm text-rose-700">{joinError}</p>}
         {message && <p className={`mt-3 rounded-2xl p-3 text-sm ${isDark ? 'bg-emerald-500/15 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>{message}</p>}
       </div>
       <div className="grid grid-cols-2 gap-3">

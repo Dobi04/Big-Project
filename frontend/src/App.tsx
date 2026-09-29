@@ -11,21 +11,34 @@ import TrackingPage from './pages/TrackingPage';
 import PaymentsPage from './pages/PaymentsPage';
 import AdminPage from './pages/AdminPage';
 import { apiClient } from './api/client';
+import axios from 'axios';
 
 function App() {
   useEffect(() => {
+    const clear = () => {
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+    };
     apiClient
       .get('/api/Auth/me')
       .then((response) => {
         const { username, role } = response.data;
-        localStorage.setItem('username', username);
-        localStorage.setItem('role', role);
+        if (username && role) {
+          localStorage.setItem('username', username);
+          localStorage.setItem('role', role);
+        } else {
+          clear();
+        }
+        window.dispatchEvent(new Event('auth:changed'));
       })
-      .catch(() =>{
-        localStorage.removeItem('username');
-        localStorage.removeItem('role');
+      .catch((error) =>{
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+        clear();
+        window.dispatchEvent(new Event('auth:changed'));
+        }
       })
   }, []);
+  
   return (
     <BrowserRouter>
       <Routes>
