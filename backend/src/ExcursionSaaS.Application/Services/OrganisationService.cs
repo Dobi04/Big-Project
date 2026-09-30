@@ -30,16 +30,16 @@ namespace ExcursionSaaS.Application.Services
             return memberships.Select(m => new JoinedOrganisationDTO
             {
                 OrganisationId = m.OrganisationId,
-                OrganisationName = m.Organisation.OrganisationName,
-                OrganisationLogo = m.Organisation.OrganisationLogo,
-                OrganisationDescription = m.Organisation.OrganisationDescription,
-                Type = m.Organisation.Type.ToString(),
-                Status = m.Organisation.Status.ToString(),
-                SubscriptionType = m.Organisation.SubscriptionType.ToString(),
+                OrganisationName = m.OrganisationName,
+                OrganisationLogo = m.OrganisationLogo,
+                OrganisationDescription = m.OrganisationDescription,
+                Type = m.Type,
+                Status = m.Status.ToString(),
+                SubscriptionType = m.SubscriptionType.ToString(),
                 PaymentStatus = m.PaymentStatus.ToString(),
                 MyRole = m.Role.ToString(),
                 JoinedAt = m.JoinedAt,
-                MemberCount = m.Organisation.Members.Count,
+                MemberCount = m.MemberCount,
                 UnreadNotificationsCount = unreadNotificationsCount.GetValueOrDefault(m.OrganisationId, 0)
             }).ToList();
         }
@@ -48,19 +48,11 @@ namespace ExcursionSaaS.Application.Services
         {
             if (latitude.HasValue && longitude.HasValue)
             {
-                var topOrganisations = await _organisationRepository.GetPublicActiveByCordinatesAsync();
-                return topOrganisations.Select(o => new
-                {
-                    Organisation = o,
-                    DistanceKm = HaversineDistanceKm(latitude.Value, longitude.Value, o.Latitude!.Value, o.Longitude!.Value)
-                })
-                .OrderBy(x => x.DistanceKm)
-                .Take(count)
-                .Select(x => ToSummaryDTO(x.Organisation, x.DistanceKm))
-                .ToList();
+                var topOrganisations = await _organisationRepository.GetPublicActiveByCordinatesAsync(latitude.Value, longitude.Value, count);
+                return topOrganisations.Select(ToSummaryDTO).ToList();
             }
             var top = await _organisationRepository.GetTopByPopularityAsync(count);
-            return top.Select(o => ToSummaryDTO(o, distanceKm: null)).ToList();
+            return top.Select(ToSummaryDTO).ToList();
         }
 
         public async Task<OrganisationDetailsDTO> GetOrganisationByIdAsync(int organisationId, int requesterId)
@@ -134,7 +126,7 @@ namespace ExcursionSaaS.Application.Services
 
             return new PagedResponseDTO<OrganisationSummaryDTO>
             {
-                Items = result.Items.Select(o => ToSummaryDTO(o, distanceKm: null)).ToList(),
+                Items = result.Items.Select(ToSummaryDTO).ToList(),
                 TotalCount = result.TotalCount,
                 Page = page,
                 PageSize = pageSize,
@@ -320,23 +312,10 @@ namespace ExcursionSaaS.Application.Services
             }
         }
 
-        private static double HaversineDistanceKm(double lat1, double lon1, double lat2, double lon2)
-        {
-            const double R = 6371; // Radius of the Earth in km
-            var dLat = ToRadians(lat2 - lat1);
-            var dLon = ToRadians(lon2 - lon1);
-            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                    Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
-                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            return R * c;
-        }
-
-        private static double ToRadians(double x) => x * Math.PI / 180;
         #endregion
 
         #region DTO Conversion Methods
-        private static OrganisationSummaryDTO ToSummaryDTO(Organisation organisation, double? distanceKm)
+        private static OrganisationSummaryDTO ToSummaryDTO(OrganisationSummaryProjectionDTO organisation)
         {
             return new OrganisationSummaryDTO
             {
@@ -346,10 +325,10 @@ namespace ExcursionSaaS.Application.Services
                 OrganisationDescription = organisation.OrganisationDescription,
                 Type = organisation.Type,
                 Visibility = organisation.Visibility.ToString(),
-                MembersCount = organisation.Members.Count,
+                MembersCount = organisation.MembersCount,
                 AverageRating = organisation.AverageRating,
                 RatingsCount = organisation.RatingsCount,
-                DistanceKm = distanceKm
+                DistanceKm = organisation.DistanceKm
             };
         }
         private static OrganisationDetailsDTO ToDetailsDTO(Organisation organisation, int requesterId)
