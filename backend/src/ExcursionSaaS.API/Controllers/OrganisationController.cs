@@ -45,12 +45,12 @@ namespace ExcursionSaaS.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> GetOrganisationById(int id)
         {
             try
             {
-                var organisation = await _organisationService.GetOrganisationByIdAsync(id, GetUserId());
+                var organisation = await _organisationService.GetOrganisationByIdAsync(id, GetOptionalUserId());
                 return Ok(organisation);
             }
             catch (KeyNotFoundException ex)
@@ -235,6 +235,12 @@ namespace ExcursionSaaS.API.Controllers
         #endregion
 
         #region Helper Methods
+        private int GetOptionalUserId()
+        {
+            var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(value, out var id) ? id : 0;
+        }
+
         private int GetUserId()
         {
             return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)

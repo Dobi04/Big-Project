@@ -8,11 +8,12 @@ import { useAuth } from '../hooks/useAuth';
 import { useSidebar } from '../hooks/useSidebar';
 import { getThemeClasses } from '../lib/themeClasses';
 
+type AuthMode = 'signin' | 'login';
+
 export type LayoutOutletContext = {
   theme: 'dark' | 'light';
+  openAuth: (mode: AuthMode) => void;
 };
-
-type AuthMode = 'signin' | 'login';
 
 export default function MainLayout() {
   const { theme, toggleTheme } = useTheme();
@@ -37,6 +38,7 @@ export default function MainLayout() {
 
   const handleAuthSuccess = () => {
     refresh();
+    window.dispatchEvent(new Event('auth:changed'));
     setIsAuthModalOpen(false);
   };
 
@@ -69,7 +71,7 @@ export default function MainLayout() {
           />
 
           <main className="mx-auto max-w-md px-4 py-5 pb-20">
-            <Outlet context={{ theme } satisfies LayoutOutletContext} />
+            <Outlet context={{ theme, openAuth: openAuthModal } satisfies LayoutOutletContext} />
           </main>
         </div>
       </div>
