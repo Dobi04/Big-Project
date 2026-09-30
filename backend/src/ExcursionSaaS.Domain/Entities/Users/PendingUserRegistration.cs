@@ -10,5 +10,8 @@ namespace ExcursionSaaS.Domain.Entities
         public string PasswordHash { get; set; } = string.Empty;
         public string VerificationCode { get; set; } = string.Empty;
         public DateTime VerificationCodeExpiry { get; set; }
+        public int FailedVerificationAttempts { get; set; }
+        public int ResendCount { get; set; }
+        public DateTime LastCodeSentAt { get; set; }
     }
 }

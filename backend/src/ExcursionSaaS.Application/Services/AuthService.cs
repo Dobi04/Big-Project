@@ -16,6 +16,9 @@ public class AuthService : IAuthServices
 {
     #region Constants and Constructors
     private const int VerificationCodeValidityMinutes = 5;
+    private const int MaxFailedVerificationAttempts = 5;
+    private const int VerificationCodeResendIntervalSeconds = 60;
+    private const int MaxVerificationCodeResends = 5;
 
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
@@ -97,7 +100,8 @@ public class AuthService : IAuthServices
             Email = dto.Email,
             PasswordHash = _passwordHasher.Hash(dto.Password),
             VerificationCode = code,
-            VerificationCodeExpiry = DateTime.UtcNow.AddMinutes(VerificationCodeValidityMinutes)
+            VerificationCodeExpiry = DateTime.UtcNow.AddMinutes(VerificationCodeValidityMinutes),
+            LastCodeSentAt = now
         };
 
         await _userRepository.AddPendingAsync(pendingRegistration);
@@ -145,9 +149,17 @@ public class AuthService : IAuthServices
             return new MessageResponseDTO { Message = "A new code has been sent." };
         }
 
+        var now = DateTime.UtcNow;
+        if (pendingRegistration.ResendCount >= MaxVerificationCodeResends ||
+            now - pendingRegistration.LastCodeSentAt < TimeSpan.FromSeconds(VerificationCodeResendIntervalSeconds))
+            return new MessageResponseDTO { Message = "A new code has been sent." };
+
         var code = GenerateVerificationCode();
         pendingRegistration.VerificationCode = code;
-        pendingRegistration.VerificationCodeExpiry = DateTime.UtcNow.AddMinutes(VerificationCodeValidityMinutes);
+        pendingRegistration.VerificationCodeExpiry = now.AddMinutes(VerificationCodeValidityMinutes);
+        pendingRegistration.FailedVerificationAttempts = 0;
+        pendingRegistration.ResendCount++;
+        pendingRegistration.LastCodeSentAt = now;
 
         await _userRepository.SaveChangesAsync();
         await _emailSender.SendEmailAsync(
@@ -169,7 +181,14 @@ public class AuthService : IAuthServices
         var providedCode = Encoding.UTF8.GetBytes(dto.Code ?? string.Empty);
         if (expectedCode.Length != providedCode.Length ||
             !CryptographicOperations.FixedTimeEquals(expectedCode, providedCode))
+        {
+            pendingRegistration.FailedVerificationAttempts++;
+            if (pendingRegistration.FailedVerificationAttempts >= MaxFailedVerificationAttempts)
+                await _userRepository.RemovePendingAsync(pendingRegistration);
+
+            await _userRepository.SaveChangesAsync();
             throw new InvalidOperationException("Invalid email or verification code");
+        }
 
         if (pendingRegistration.VerificationCodeExpiry < DateTime.UtcNow)
             throw new InvalidOperationException("Verification code has expired please request a new one");

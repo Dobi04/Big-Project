@@ -18,6 +18,9 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
             builder.Property(registration => registration.PasswordHash).IsRequired().HasMaxLength(255);
             builder.Property(registration => registration.VerificationCode).IsRequired().HasMaxLength(10);
             builder.Property(registration => registration.VerificationCodeExpiry).IsRequired();
+            builder.Property(registration => registration.FailedVerificationAttempts).IsRequired().HasDefaultValue(0);
+            builder.Property(registration => registration.ResendCount).IsRequired().HasDefaultValue(0);
+            builder.Property(registration => registration.LastCodeSentAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.HasIndex(registration => registration.Username).IsUnique();
             builder.HasIndex(registration => registration.Email).IsUnique();
