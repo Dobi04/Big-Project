@@ -23,7 +23,7 @@ namespace ExcursionSaaS.Infrastructure.Migrations
                 table: "PendingUserRegistration",
                 type: "datetime(6)",
                 nullable: false,
-                defaultValueSql: "CURRENT_TIMESTAMP");
+                defaultValueSql: "CURRENT_TIMESTAMP(6)");
 
             migrationBuilder.AddColumn<int>(
                 name: "ResendCount",
