@@ -4,15 +4,46 @@ using ExcursionSaaS.Application;
 using ExcursionSaaS.Application.Interfaces;
 using ExcursionSaaS.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Net;
 using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
 
 #region Builder Setup
 var builder = WebApplication.CreateBuilder(args);
+
+var knownProxyAddresses = builder.Configuration.GetSection("ForwardedHeaders:KnownProxies")
+    .Get<string[]>()?
+    .Where(address => !string.IsNullOrWhiteSpace(address))
+    .Select(address => address.Trim())
+    .ToArray() ?? [];
+var knownProxyNetworks = builder.Configuration.GetSection("ForwardedHeaders:KnownNetworks")
+    .Get<string[]>()?
+    .Where(network => !string.IsNullOrWhiteSpace(network))
+    .Select(network => network.Trim())
+    .ToArray() ?? [];
+var forwardedHeadersEnabled = knownProxyAddresses.Length > 0 || knownProxyNetworks.Length > 0;
+
+if (forwardedHeadersEnabled)
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.ForwardLimit = 1;
+        options.KnownProxies.Clear();
+        options.KnownIPNetworks.Clear();
+
+        foreach (var address in knownProxyAddresses)
+            options.KnownProxies.Add(IPAddress.Parse(address));
+
+        foreach (var network in knownProxyNetworks)
+            options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(network));
+    });
+}
 
 builder.Services.AddControllers();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -136,6 +167,9 @@ builder.Services.AddRateLimiter(options =>
 
 #region App Pipeline
 var app = builder.Build();
+
+if (forwardedHeadersEnabled)
+    app.UseForwardedHeaders();
 
 app.UseExceptionHandler();
 
