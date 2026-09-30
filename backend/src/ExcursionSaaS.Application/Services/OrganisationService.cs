@@ -135,7 +135,7 @@ namespace ExcursionSaaS.Application.Services
         }
         #endregion
 
-        #region Autorised Methods
+        #region Authorized Methods
         public async Task<OrganisationDetailsDTO> CreateOrganisationAsync(CreateOrganisationDTO createDto, int requesterId, Roles requesterRole)
         {
             EnsureCanCreate(requesterRole);

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class DodajOrganizacijuEventNotifikaciju : Migration
+    public partial class AddOrganisationEventNotifications : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

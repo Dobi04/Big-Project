@@ -12,6 +12,7 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 {
     public class OrganisationRepository : IOrganisationRepository
     {
+        #region Constants and Constructor
         private const double EarthRadiusKilometers = 6371d;
         private static readonly Expression<Func<Organisation, OrganisationSummaryProjectionDTO>> SummaryProjection = organisation => new OrganisationSummaryProjectionDTO
         {
@@ -32,11 +33,15 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
         {
             _appDbContext = appDbContext;
         }
+        #endregion
 
+        #region Add Operations
         public Task AddAsync(Organisation organisation) => _appDbContext.Organisations.AddAsync(organisation).AsTask();
 
         public Task AddMemberAsync(OrganisationMember member) => _appDbContext.OrganisationMembers.AddAsync(member).AsTask();
+        #endregion
 
+        #region Query Methods
         public Task<List<JoinedOrganisationProjectionDTO>> GetMembershipsByUserAsync(int memberId)
         {
             return _appDbContext.OrganisationMembers
@@ -84,7 +89,9 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 
             return (items, totalCount);
         }
+        #endregion
 
+        #region Query Helpers
         private IQueryable<Organisation> BuildPublicActiveQuery(string? search, string? type)
         {
             var query = _appDbContext.Organisations
@@ -101,7 +108,9 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 
             return query;
         }
+        #endregion
 
+        #region Discovery Queries
         public Task<List<OrganisationSummaryProjectionDTO>> GetPublicActiveByCordinatesAsync(double latitude, double longitude, int count)
         {
             var coordinates = _appDbContext.Organisations
@@ -167,11 +176,14 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
                 .Select(SummaryProjection)
                 .ToListAsync();
         }
+            #endregion
 
+            #region Remove and Save Operations
         public void Remove(Organisation organisation) => _appDbContext.Organisations.Remove(organisation);
 
         public void RemoveMember(OrganisationMember member) => _appDbContext.OrganisationMembers.Remove(member);
 
         public Task SaveChangesAsync() => _appDbContext.SaveChangesAsync();
+        #endregion
     }
 }

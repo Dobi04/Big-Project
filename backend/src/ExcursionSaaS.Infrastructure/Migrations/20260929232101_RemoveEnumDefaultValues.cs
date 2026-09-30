@@ -5,7 +5,7 @@
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UkloniDefaultVrednostiEnuma : Migration
+    public partial class RemoveEnumDefaultValues : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

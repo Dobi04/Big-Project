@@ -5,13 +5,16 @@ namespace ExcursionSaaS.API.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
+        #region Constructor
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
             this._httpContextAccessor = httpContextAccessor;
         }
+        #endregion
 
+        #region Current User Claims
         public int? UserId
         {
             get
@@ -24,5 +27,6 @@ namespace ExcursionSaaS.API.Services
         public string? Username => _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name);
 
         public string? IpAddress => _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        #endregion
     }
 }

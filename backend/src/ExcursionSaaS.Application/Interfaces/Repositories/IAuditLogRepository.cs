@@ -8,6 +8,7 @@ namespace ExcursionSaaS.Application.Interfaces.Repositories
 {
     public interface IAuditLogRepository
     {
+        #region Query Methods
         Task<AuditLog?> FindByIdAsync(int id);
         Task<(List<AuditLog> Items, int TotalCount)> GetPagedAsync(
             string? entityName = null,
@@ -25,8 +26,11 @@ namespace ExcursionSaaS.Application.Interfaces.Repositories
             AuditAction? action = null,
             DateTime? dateFrom = null,
             DateTime? dateTo = null);
+        #endregion
+
+        #region Command Methods
         Task AddAsync(AuditLog auditLog);
         Task SaveChangesAsync();
-
+        #endregion
     }
 }

@@ -13,7 +13,7 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260930102754_OgranicenjePokusajaVerifikacije")]
-    partial class OgranicenjePokusajaVerifikacije
+    partial class VerificationAttemptLimit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

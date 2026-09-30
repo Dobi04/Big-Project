@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class DodajEmailVerifikaciju : Migration
+    public partial class AddEmailVerification : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

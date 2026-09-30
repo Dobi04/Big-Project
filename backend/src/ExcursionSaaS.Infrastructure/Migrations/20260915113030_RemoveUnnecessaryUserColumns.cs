@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class ObrisiNepotrebneKoloneIsUsera : Migration
+    public partial class RemoveUnnecessaryUserColumns : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

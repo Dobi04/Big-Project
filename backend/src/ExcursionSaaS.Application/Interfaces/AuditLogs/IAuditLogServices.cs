@@ -7,7 +7,9 @@ namespace ExcursionSaaS.Application.Interfaces.AuditLogs
 {
     public interface IAuditLogServices
     {
+        #region Query Methods
         Task<AuditLogPagedResponseDTO> GetAllAsync(AuditLogFilterDTO filter);
         Task<List<AuditLogResponseDTO>> GetByEntityAsync(string entityName, string entityId);
+        #endregion
     }
 }

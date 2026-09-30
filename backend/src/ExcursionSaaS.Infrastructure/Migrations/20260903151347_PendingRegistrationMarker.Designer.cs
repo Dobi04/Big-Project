@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260903150654_DodajRegistracijuNaCekanju")]
-    partial class DodajRegistracijuNaCekanju
+    [Migration("20260903151347_PendingRegistracija")]
+    partial class PendingRegistrationMarker
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

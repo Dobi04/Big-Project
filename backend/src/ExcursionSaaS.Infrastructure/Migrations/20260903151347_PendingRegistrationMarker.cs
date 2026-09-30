@@ -5,7 +5,7 @@
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class PendingRegistracija : Migration
+    public partial class PendingRegistrationMarker : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

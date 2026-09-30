@@ -9,6 +9,8 @@ namespace ExcursionSaaS.Infrastructure.Persistence
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        #region Entity Sets
         public DbSet<User> Users => Set<User>();
         public DbSet<PendingUserRegistration> PendingUserRegistrations => Set<PendingUserRegistration>();
 
@@ -20,11 +22,14 @@ namespace ExcursionSaaS.Infrastructure.Persistence
         public DbSet<Notification> Notifications => Set<Notification>();
 
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+        #endregion
 
+        #region Model Configuration
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
         }
+        #endregion
     }
 }

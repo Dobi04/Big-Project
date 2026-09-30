@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260929232101_UkloniDefaultVrednostiEnuma")]
-    partial class UkloniDefaultVrednostiEnuma
+    [Migration("20260925064350_AddedAuditLogu")]
+    partial class AddAuditLog
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,8 +103,10 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("Active");
 
                     b.HasKey("Id");
 
@@ -144,8 +146,10 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(50)")
+                        .HasDefaultValue("General");
 
                     b.HasKey("Id");
 
@@ -206,8 +210,10 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("Active");
 
                     b.Property<string>("SubscriptionType")
                         .IsRequired()
@@ -223,8 +229,10 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("Visibility")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("Private");
 
                     b.Property<decimal?>("YearlyPrice")
                         .HasColumnType("decimal(10,2)");
@@ -259,13 +267,17 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("Free");
 
                     b.Property<string>("Role")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("Participant");
 
                     b.HasKey("Id");
 

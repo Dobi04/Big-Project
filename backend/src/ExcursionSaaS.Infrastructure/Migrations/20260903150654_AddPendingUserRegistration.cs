@@ -7,55 +7,55 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedAuditLogu : Migration
+    public partial class AddPendingUserRegistration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AuditLog",
+                name: "PendingUserRegistration",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    EntityName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EntityId = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                    Surname = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Action = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
                     Username = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Timestamp = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    OldValues = table.Column<string>(type: "json", nullable: true)
+                    Email = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    NewValues = table.Column<string>(type: "json", nullable: true)
+                    PasswordHash = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    IpAddress = table.Column<string>(type: "varchar(45)", maxLength: 45, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    VerificationCode = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    VerificationCodeExpiry = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuditLog", x => x.Id);
+                    table.PrimaryKey("PK_PendingUserRegistration", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuditLog_EntityName_EntityId",
-                table: "AuditLog",
-                columns: new[] { "EntityName", "EntityId" });
+                name: "IX_PendingUserRegistration_Email",
+                table: "PendingUserRegistration",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuditLog_Timestamp",
-                table: "AuditLog",
-                column: "Timestamp");
+                name: "IX_PendingUserRegistration_Username",
+                table: "PendingUserRegistration",
+                column: "Username",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AuditLog");
+                name: "PendingUserRegistration");
         }
     }
 }

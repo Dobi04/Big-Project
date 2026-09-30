@@ -10,13 +10,16 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 {
     public class AuditLogRepository : IAuditLogRepository
     {
+        #region Constructor
         private readonly AppDbContext _appDbContext;
 
         public AuditLogRepository(AppDbContext appDbContext)
         {
             this._appDbContext = appDbContext;
         }
+        #endregion
 
+        #region Repository Operations
         public Task AddAsync(AuditLog auditLog) => _appDbContext.AuditLogs.AddAsync(auditLog).AsTask();
 
         public async Task<AuditLog?> FindByIdAsync(int id) => 
@@ -45,7 +48,9 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 
             return (items, totalCount);
         }
+        #endregion
 
+        #region Query Helpers
         private IQueryable<AuditLog> BuildQuery(string? entityName, string? entityId, int? userId, AuditAction? action, DateTime? dateFrom, DateTime? dateTo)
         {
             var query = _appDbContext.AuditLogs.AsQueryable();
@@ -70,7 +75,10 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 
             return query;
         }
+        #endregion
 
+        #region Persistence
         public async Task SaveChangesAsync() => await _appDbContext.SaveChangesAsync();
+        #endregion
     }
 }

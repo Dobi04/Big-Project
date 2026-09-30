@@ -36,7 +36,7 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
                 .HasForeignKey(m => m.MemberId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Jedan korisnik moze biti clan iste organizacije samo jednom.
+            // A user can only be a member of the same organisation once.
             builder.HasIndex(m => new { m.OrganisationId, m.MemberId }).IsUnique();
         }
     }

@@ -29,7 +29,7 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
                 .HasForeignKey(e => e.OrganisationId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Ubrzava racunanje Total/Active eventa po organizaciji.
+            // Speeds up counting total and active events by organisation.
             builder.HasIndex(e => new { e.OrganisationId, e.Status, e.EndDate });
         }
     }

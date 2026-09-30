@@ -108,9 +108,9 @@ public class AuthService : IAuthServices
         await _userRepository.SaveChangesAsync();
         await _emailSender.SendEmailAsync(
             pendingRegistration.Email,
-            "Verifikacija naloga",
-            $"<p>Zdravo {WebUtility.HtmlEncode(pendingRegistration.Name)},</p><p>Tvoj verifikacioni kod je: <b>{code}</b></p>" +
-            $"<p>Kod važi {VerificationCodeValidityMinutes} minuta.</p>");
+            "Account verification",
+            $"<p>Hello {WebUtility.HtmlEncode(pendingRegistration.Name)},</p><p>Your verification code is: <b>{code}</b></p>" +
+            $"<p>The code is valid for {VerificationCodeValidityMinutes} minutes.</p>");
 
         return new MessageResponseDTO
         {
@@ -164,9 +164,9 @@ public class AuthService : IAuthServices
         await _userRepository.SaveChangesAsync();
         await _emailSender.SendEmailAsync(
             pendingRegistration.Email,
-            "Verifikacija naloga",
-            $"<p>Tvoj novi verifikacioni kod je: <b>{code}</b></p>" +
-            $"<p>Kod važi {VerificationCodeValidityMinutes} minuta.</p>");
+            "Account verification",
+            $"<p>Your new verification code is: <b>{code}</b></p>" +
+            $"<p>The code is valid for {VerificationCodeValidityMinutes} minutes.</p>");
 
         return new MessageResponseDTO { Message = "A new code has been sent." };
     }

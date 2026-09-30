@@ -11,13 +11,14 @@ namespace ExcursionSaaS.Infrastructure.Persistence
 {
     public class AuditSaveChangesInterceptor : SaveChangesInterceptor
     {
+        #region Configuration and Constructor
         private static readonly HashSet<string> AuditedEntityNames = new(StringComparer.Ordinal)
         {
             nameof(Organisation),
             nameof(OrganisationMember),
             nameof(Event),
             nameof(User)
-            // dodaj/ukloni entitete po potrebi
+            // Add or remove entities as needed.
         };
 
         private readonly ICurrentUserService _currentUserService;
@@ -27,7 +28,9 @@ namespace ExcursionSaaS.Infrastructure.Persistence
         {
             _currentUserService = currentUserService;
         }
+        #endregion
 
+        #region Save Lifecycle
         public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
             DbContextEventData eventData,
             InterceptionResult<int> result,
@@ -74,7 +77,9 @@ namespace ExcursionSaaS.Infrastructure.Persistence
 
             return await base.SavedChangesAsync(eventData, result, cancellationToken);
         }
+        #endregion
 
+        #region Audit Entry Helpers
         private static PendingAuditEntry CreatePendingEntry(EntityEntry entry)
         {
             var action = entry.State switch
@@ -127,5 +132,6 @@ namespace ExcursionSaaS.Infrastructure.Persistence
             string? EntityId,
             string? OldValues,
             string? NewValues);
+        #endregion
     }
 }

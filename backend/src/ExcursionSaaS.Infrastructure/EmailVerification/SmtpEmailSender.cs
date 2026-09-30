@@ -10,13 +10,16 @@ namespace ExcursionSaaS.Infrastructure.EmailVerification
 {
     public class SmtpEmailSender : IEmailSender
     {
+        #region Constructor
         private readonly IConfiguration _configuration;
 
         public SmtpEmailSender(IConfiguration configuration)
         {
             _configuration = configuration;
         }
+        #endregion
 
+        #region Email Delivery
         public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
             var host = _configuration["Smtp:Host"]
@@ -46,5 +49,6 @@ namespace ExcursionSaaS.Infrastructure.EmailVerification
             message.To.Add(toEmail);
             await client.SendMailAsync(message);
         }
+        #endregion
     }
 }

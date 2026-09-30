@@ -10,13 +10,16 @@ namespace ExcursionSaaS.Application.Services
 {
     public class AuditLogService : IAuditLogServices
     {
+        #region Constructor
         private readonly IAuditLogRepository _auditLogRepository;
 
         public AuditLogService(IAuditLogRepository auditLogRepository)
         {
             _auditLogRepository = auditLogRepository;
         }
+        #endregion
 
+        #region Query Methods
         public async Task<AuditLogPagedResponseDTO> GetAllAsync(AuditLogFilterDTO filter)
         {
             var page = Math.Max(filter.Page, 1);
@@ -50,7 +53,9 @@ namespace ExcursionSaaS.Application.Services
             var auditLogs = await _auditLogRepository.GetAllAsync(entityName, entityId);
             return auditLogs.Select(ToResponceDto).ToList();
         }
+        #endregion
 
+        #region Mapping Helpers
         private static AuditLogResponseDTO ToResponceDto(AuditLog auditLog) => new()
         {
             Id = auditLog.Id,
@@ -64,5 +69,6 @@ namespace ExcursionSaaS.Application.Services
             NewValues = auditLog.NewValues,
             IpAddress = auditLog.IpAddress
         };
+        #endregion
     }
 }

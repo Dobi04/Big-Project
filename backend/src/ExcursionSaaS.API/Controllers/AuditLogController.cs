@@ -14,13 +14,16 @@ namespace ExcursionSaaS.API.Controllers
     [Route("api/[controller]")]
     public class AuditLogController : ControllerBase
     {
+        #region Constructor
         private readonly IAuditLogServices _auditLogService;
 
         public AuditLogController(IAuditLogServices auditLogService)
         {
             _auditLogService = auditLogService;
         }
+        #endregion
 
+        #region Endpoints
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll([FromQuery] AuditLogFilterDTO filter)
@@ -36,5 +39,6 @@ namespace ExcursionSaaS.API.Controllers
             var result = await _auditLogService.GetByEntityAsync(entityName, entityId);
             return Ok(result);
         }
+        #endregion
     }
 }

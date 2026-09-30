@@ -9,13 +9,16 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        #region Constructor
         private readonly AppDbContext _appDbContext;
 
         public UserRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
         }
+        #endregion
 
+        #region Repository Operations
         public Task Add(User user) => _appDbContext.Users.AddAsync(user).AsTask();
 
         public async Task<User?> FindByEmailAsync(string email) => await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -37,5 +40,6 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
         public async Task SaveChangesAsync() => await _appDbContext.SaveChangesAsync();
 
         public async Task<User?> FindByIdAsync(int id) => await _appDbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+        #endregion
     }
 }

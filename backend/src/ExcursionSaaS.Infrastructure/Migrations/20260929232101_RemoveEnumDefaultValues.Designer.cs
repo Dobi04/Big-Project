@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExcursionSaaS.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260906170718_DodajOrganizacijuEventNotifikaciju")]
-    partial class DodajOrganizacijuEventNotifikaciju
+    [Migration("20260929232101_UkloniDefaultVrednostiEnuma")]
+    partial class RemoveEnumDefaultValues
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,57 @@ namespace ExcursionSaaS.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("ExcursionSaaS.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EntityId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("varchar(45)");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("json");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("json");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Timestamp");
+
+                    b.HasIndex("EntityName", "EntityId");
+
+                    b.ToTable("AuditLog", (string)null);
+                });
 
             modelBuilder.Entity("ExcursionSaaS.Domain.Entities.Event", b =>
                 {
@@ -50,10 +101,10 @@ namespace ExcursionSaaS.Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("Id");
 
@@ -93,10 +144,8 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("General");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -157,10 +206,8 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)")
-                        .HasDefaultValue("Active");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("SubscriptionType")
                         .IsRequired()
@@ -176,10 +223,8 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("Visibility")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)")
-                        .HasDefaultValue("Private");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<decimal?>("YearlyPrice")
                         .HasColumnType("decimal(10,2)");
@@ -214,17 +259,13 @@ namespace ExcursionSaaS.Infrastructure.Migrations
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)")
-                        .HasDefaultValue("Free");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)")
-                        .HasDefaultValue("Participant");
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("Id");
 
@@ -303,13 +344,6 @@ namespace ExcursionSaaS.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<string>("EmailVerificationCode")
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<DateTime?>("EmailVerificationCodeExpiry")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()

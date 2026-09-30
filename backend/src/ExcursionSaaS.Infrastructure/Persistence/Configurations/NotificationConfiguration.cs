@@ -36,7 +36,7 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
                 .HasForeignKey(n => n.OrganisationId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Ubrzava "daj mi nepročitane notifikacije za ovog korisnika".
+            // Speeds up retrieving unread notifications for a user.
             builder.HasIndex(n => new { n.RecipientId, n.IsRead });
         }
     }

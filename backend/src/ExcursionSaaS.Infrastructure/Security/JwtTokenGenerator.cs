@@ -12,13 +12,16 @@ namespace ExcursionSaaS.Infrastructure.Security
 {
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
+        #region Constructor
         private readonly IConfiguration _configuration;
 
         public JwtTokenGenerator(IConfiguration configuration)
         {
             _configuration = configuration;
         }
+        #endregion
 
+        #region Token Generation
         public string GenerateToken(User user)
         {
             var claims = new List<Claim>
@@ -48,5 +51,6 @@ namespace ExcursionSaaS.Infrastructure.Security
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        #endregion
     }
 }
