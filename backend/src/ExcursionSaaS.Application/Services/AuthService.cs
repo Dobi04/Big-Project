@@ -109,7 +109,7 @@ public class AuthService : IAuthServices
         await _emailSender.SendEmailAsync(
             pendingRegistration.Email,
             "Verifikacija naloga",
-            $"<p>Zdravo {WebUtility.HtmlDecode(pendingRegistration.Name)},</p><p>Tvoj verifikacioni kod je: <b>{code}</b></p>" +
+            $"<p>Zdravo {WebUtility.HtmlEncode(pendingRegistration.Name)},</p><p>Tvoj verifikacioni kod je: <b>{code}</b></p>" +
             $"<p>Kod važi {VerificationCodeValidityMinutes} minuta.</p>");
 
         return new MessageResponseDTO
