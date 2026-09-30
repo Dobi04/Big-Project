@@ -12,7 +12,7 @@ namespace ExcursionSaaS.Application.DTOs.AuthDTOs
         public string Username { get; set; } = string.Empty;
         [Required, EmailAddress, StringLength(100)]
         public string Email { get; set; } = string.Empty;
-        [Required, MinLength(8)]
+        [Required, MinLength(8), StringLength(72, MinimumLength = 8)]
         public string Password { get; set; } = string.Empty;
     }
 }

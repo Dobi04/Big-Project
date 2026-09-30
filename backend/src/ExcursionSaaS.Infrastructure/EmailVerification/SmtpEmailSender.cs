@@ -27,7 +27,7 @@ namespace ExcursionSaaS.Infrastructure.EmailVerification
                 ?? throw new InvalidOperationException("Smtp username in not configured");
             var password = _configuration["Smtp:Password"]
                 ?? throw new InvalidOperationException("Smtp password in not configured");
-            var form = _configuration["Smtp:Form"] ?? username;
+            var from = _configuration["Smtp:From"] ?? username;
             var enableSsl = bool.Parse(_configuration["Smtp:EnableSsl"] ?? "true");
 
             using var client = new SmtpClient(host, port)
@@ -38,7 +38,7 @@ namespace ExcursionSaaS.Infrastructure.EmailVerification
 
             using var message = new MailMessage
             {
-                From = new MailAddress(form),
+                From = new MailAddress(from),
                 Subject = subject,
                 Body = htmlBody,
                 IsBodyHtml = true,

@@ -19,10 +19,12 @@ namespace ExcursionSaaS.API.Controllers
     {
         #region Constants and Constructors
         private readonly IAuthServices _authService;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthServices authService)
+        public AuthController(IAuthServices authService, IConfiguration configuration)
         {
             _authService = authService;
+            _configuration = configuration;
         }
         #endregion
 
@@ -149,6 +151,9 @@ namespace ExcursionSaaS.API.Controllers
         #region Helpers
         private void SetAuthCookie(string token)
         {
+            var expirationText = _configuration["Jwt:ExpirationMinutes"] ?? _configuration["Jwt:ExpiresInMinutes"];
+            var expirationMinutes = int.TryParse(expirationText, out var minutes) && minutes > 0 ? minutes : 60;
+
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,

@@ -6,6 +6,7 @@ using ExcursionSaaS.Application.Interfaces.Repositories;
 using ExcursionSaaS.Application.Interfaces.Security;
 using ExcursionSaaS.Domain.Entities;
 using ExcursionSaaS.Domain.Enums.Users;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -20,6 +21,7 @@ public class AuthService : IAuthServices
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEmailSender _emailSender;
+    private static string? _dummyPasswordHash;
 
     public AuthService(
         IUserRepository userRepository,
@@ -38,7 +40,11 @@ public class AuthService : IAuthServices
     public async Task<AuthResponseDTO> LoginAsync(LogInDTO dto)
     {
         var user = await _userRepository.FindByUsernameAsync(dto.Username);
-        if (user == null || !_passwordHasher.Verify(dto.Password, user.PasswordHash))
+
+        _dummyPasswordHash ??= _passwordHasher.Hash("dummy-password-for-timing");
+        var passwordOk = _passwordHasher.Verify(dto.Password, user?.PasswordHash ?? _dummyPasswordHash);
+
+        if (user == null || !passwordOk)
             throw new UnauthorizedAccessException("Wrong username or password");
 
         if (!user.isEmailVerified)
@@ -99,7 +105,7 @@ public class AuthService : IAuthServices
         await _emailSender.SendEmailAsync(
             pendingRegistration.Email,
             "Verifikacija naloga",
-            $"<p>Zdravo {pendingRegistration.Name},</p><p>Tvoj verifikacioni kod je: <b>{code}</b></p>" +
+            $"<p>Zdravo {WebUtility.HtmlDecode(pendingRegistration.Name)},</p><p>Tvoj verifikacioni kod je: <b>{code}</b></p>" +
             $"<p>Kod važi {VerificationCodeValidityMinutes} minuta.</p>");
 
         return new MessageResponseDTO

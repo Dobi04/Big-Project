@@ -6,7 +6,7 @@ namespace ExcursionSaaS.Application.DTOs.AuthDTOs
     {
         [Required]
         public string Username { get; set; } = string.Empty;
-        [Required]
+        [Required, MaxLength(128)]
         public string Password { get; set; } = string.Empty;
     }
 }
