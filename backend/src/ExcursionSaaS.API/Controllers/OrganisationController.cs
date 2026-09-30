@@ -75,6 +75,14 @@ namespace ExcursionSaaS.API.Controllers
             return Ok(organisations);
         }
 
+        [HttpGet("owned")]
+        [Authorize(Roles = "Admin,Owner")]
+        public async Task<IActionResult> GetOwnedOrganisations()
+        {
+            var organisations = await _organisationService.GetOwnedOrganisationsAsync(GetUserId());
+            return Ok(organisations);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin,Owner")]
         public async Task<IActionResult> CreateOrganisation(CreateOrganisationDTO createDto)

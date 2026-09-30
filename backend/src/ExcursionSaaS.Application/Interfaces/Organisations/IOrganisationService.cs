@@ -12,6 +12,7 @@ public interface IOrganisationService
     Task<PagedResponseDTO<OrganisationSummaryDTO>> GetOrganisationsAsync(OrganisationFilterDTO filter);
     Task<OrganisationDetailsDTO> GetOrganisationByIdAsync(int organisationId, int requesterId);
     Task<List<JoinedOrganisationDTO>> GetJoinedOrganisationsAsync(int requesterId);
+    Task<List<OrganisationSummaryDTO>> GetOwnedOrganisationsAsync(int requesterId);
     #endregion
 
     #region Command Methods

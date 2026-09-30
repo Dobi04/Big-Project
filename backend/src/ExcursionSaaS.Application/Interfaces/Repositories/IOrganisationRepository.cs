@@ -10,6 +10,7 @@ public interface IOrganisationRepository
     Task<List<OrganisationSummaryProjectionDTO>> GetTopByPopularityAsync(int count);
     Task<List<OrganisationSummaryProjectionDTO>> GetPublicActiveByCordinatesAsync(double latitude, double longitude, int count);
     Task<List<JoinedOrganisationProjectionDTO>> GetMembershipsByUserAsync(int memberId);
+    Task<List<OrganisationSummaryProjectionDTO>> GetOwnedByUserAsync(int ownerId);
     Task<(List<OrganisationSummaryProjectionDTO> Items, int TotalCount)> GetPagedAsync(string? search, string? type, int page, int pageSize);
     #endregion
 

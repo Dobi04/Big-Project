@@ -44,6 +44,12 @@ namespace ExcursionSaaS.Application.Services
             }).ToList();
         }
 
+        public async Task<List<OrganisationSummaryDTO>> GetOwnedOrganisationsAsync(int requesterId)
+        {
+            var owned = await _organisationRepository.GetOwnedByUserAsync(requesterId);
+            return owned.Select(ToSummaryDTO).ToList();
+        }
+
         public async Task<List<OrganisationSummaryDTO>> GetTopOrganisationsAsync(double? latitude, double? longitude, int count = 10)
         {
             if (latitude.HasValue && longitude.HasValue)
@@ -139,6 +145,7 @@ namespace ExcursionSaaS.Application.Services
         public async Task<OrganisationDetailsDTO> CreateOrganisationAsync(CreateOrganisationDTO createDto, int requesterId, Roles requesterRole)
         {
             EnsureCanCreate(requesterRole);
+            // TODO: limit the number of organisations a user can create based on their plan (later)
             var visibility = ParseVisibility(createDto.Visibility);
             var subscriptionType = ParseSubscriptionType(createDto.SubscriptionType);
             ValidatePricing(subscriptionType, createDto.MonthlyPrice, createDto.YearlyPrice);

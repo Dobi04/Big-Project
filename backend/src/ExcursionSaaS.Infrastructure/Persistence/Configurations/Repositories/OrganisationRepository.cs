@@ -64,6 +64,16 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
                 .ToListAsync();
         }
 
+        public Task<List<OrganisationSummaryProjectionDTO>> GetOwnedByUserAsync(int ownerId)
+        {
+            return _appDbContext.Organisations
+                .AsNoTracking()
+                .Where(o => o.OwnerId == ownerId)
+                .OrderByDescending(o => o.CreatedAt)
+                .Select(SummaryProjection)
+                .ToListAsync();
+        }
+
         public Task<Organisation?> GetOrganisationByIdAsync(int organisationId)
         {
             var organisation = _appDbContext.Organisations
