@@ -47,3 +47,16 @@ export type JoinedOrganisation = {
   memberCount: number;
   unreadNotificationsCount: number;
 };
+
+export type CreateOrganisationPayload = {
+  organisationName: string;
+  organisationLogo: string;
+  organisationDescription: string;
+  visibility: 'Public' | 'Private';
+  type: string;
+  subscriptionType: 'Free' | 'Paid';
+  monthlyPrice?: number | null;
+  yearlyPrice?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
+};

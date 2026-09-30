@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 import type { PagedResult } from '../types/paged';
-import type { JoinedOrganisation, OrganisationDetails, OrganisationSummary } from '../types/organisation';
+import type { CreateOrganisationPayload, JoinedOrganisation, OrganisationDetails, OrganisationSummary } from '../types/organisation';
 
 export async function getTopOrganisations(count = 5): Promise<OrganisationSummary[]> {
   const response = await apiClient.get<OrganisationSummary[]>('/api/Organisation/top', { params: { count } });
@@ -34,5 +34,15 @@ export async function joinOrganisation(id: string): Promise<void> {
 
 export async function getJoinedOrganisations(): Promise<JoinedOrganisation[]> {
   const response = await apiClient.get<JoinedOrganisation[]>('/api/Organisation/joined');
+  return response.data;
+}
+
+export async function getOwnedOrganisations(): Promise<OrganisationSummary[]> {
+  const response = await apiClient.get<OrganisationSummary[]>('/api/Organisation/owned');
+  return response.data;
+}
+
+export async function createOrganisation(data: CreateOrganisationPayload): Promise<OrganisationDetails> {
+  const response = await apiClient.post<OrganisationDetails>('/api/Organisation', data);
   return response.data;
 }
