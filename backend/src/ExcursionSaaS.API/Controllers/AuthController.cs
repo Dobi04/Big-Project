@@ -159,7 +159,7 @@ namespace ExcursionSaaS.API.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddHours(1)
+                Expires = DateTime.UtcNow.AddMinutes(expirationMinutes)
             };
             Response.Cookies.Append("authToken", token, cookieOptions);
         }

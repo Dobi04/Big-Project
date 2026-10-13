@@ -1,10 +1,12 @@
 using ExcursionSaaS.Application.DTOs.AuthDTOs;
 using ExcursionSaaS.Application.DTOs.EmailVerificationDTOs;
+using ExcursionSaaS.Application.Interfaces;
 using ExcursionSaaS.Application.Interfaces.Authentication;
 using ExcursionSaaS.Application.Interfaces.Communication;
 using ExcursionSaaS.Application.Interfaces.Repositories;
 using ExcursionSaaS.Application.Interfaces.Security;
 using ExcursionSaaS.Domain.Entities;
+using ExcursionSaaS.Domain.Enums.AuditLogs;
 using ExcursionSaaS.Domain.Enums.Users;
 using System.Net;
 using System.Security.Cryptography;
@@ -25,17 +27,24 @@ public class AuthService : IAuthServices
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEmailSender _emailSender;
     private static string? _dummyPasswordHash;
+    
+    private readonly IAuditLogRepository _auditLogRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public AuthService(
         IUserRepository userRepository,
         IJwtTokenGenerator jwtTokenGenerator,
         IPasswordHasher passwordHasher,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        IAuditLogRepository auditLogRepository,
+        ICurrentUserService currentUserService)
     {
         _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
         _passwordHasher = passwordHasher;
         _emailSender = emailSender;
+        _auditLogRepository = auditLogRepository;
+        _currentUserService = currentUserService;
     }
     #endregion
 
@@ -48,10 +57,15 @@ public class AuthService : IAuthServices
         var passwordOk = _passwordHasher.Verify(dto.Password, user?.PasswordHash ?? _dummyPasswordHash);
 
         if (user == null || !passwordOk)
+        {
+            await WriteLoginAuditAsync(user, dto.Username, AuditAction.LoginFailed);
             throw new UnauthorizedAccessException("Wrong username or password");
+        }
 
         if (!user.isEmailVerified)
             throw new UnauthorizedAccessException("Email is not verified, please verify your email before logging in");
+
+        await WriteLoginAuditAsync(user, dto.Username, AuditAction.Login);
 
         return new AuthResponseDTO
         {
@@ -59,6 +73,22 @@ public class AuthService : IAuthServices
             Username = user.Username,
             Role = user.Role.ToString()
         };
+    }
+
+    private async Task WriteLoginAuditAsync(User? user, string username, AuditAction action)
+    {
+        var auditLog = new AuditLog
+        {
+            EntityName = nameof(User),
+            EntityId = user?.Id.ToString() ?? "N/A",
+            Action = action,
+            UserId = user?.Id,
+            Username = username.Length > 50 ? username[..50] : username,
+            IpAddress = _currentUserService.IpAddress,
+            Timestamp = DateTime.UtcNow
+        };
+        await _auditLogRepository.AddAsync(auditLog);
+        await _auditLogRepository.SaveChangesAsync();
     }
     #endregion
 
@@ -125,7 +155,7 @@ public class AuthService : IAuthServices
         var user = await _userRepository.FindByIdAsync(userId)
             ?? throw new InvalidOperationException("User not found");
 
-        if (!Enum.TryParse<Roles>(role, ignoreCase: true, out var parsedRole))
+        if (!Enum.TryParse<Roles>(role, ignoreCase: true, out var parsedRole) || !Enum.IsDefined(parsedRole))
             throw new InvalidOperationException("invalid role value, this role does not exist");
 
         user.Role = parsedRole;

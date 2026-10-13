@@ -13,11 +13,13 @@ namespace ExcursionSaaS.Application.Services
         #region Constants and Constructors
         private readonly IOrganisationRepository _organisationRepository;
         private readonly INotificationRepository _notificationRepository;
+        private readonly IUserRepository _userRepository;
 
-        public OrganisationService(IOrganisationRepository organisationRepository, INotificationRepository notificationRepository)
+        public OrganisationService(IOrganisationRepository organisationRepository, INotificationRepository notificationRepository, IUserRepository userRepository)
         {
             _organisationRepository = organisationRepository;
             _notificationRepository = notificationRepository;
+            _userRepository = userRepository;
         }
         #endregion
 
@@ -249,6 +251,11 @@ namespace ExcursionSaaS.Application.Services
             if (newOwnerMembership == null)
                 throw new InvalidOperationException("The specified user is not a member of this organisation.");
 
+            var newOwner = await _userRepository.FindByIdAsync(newOwnerId)
+                ?? throw new InvalidOperationException("The specified user does not exist.");
+            if (!CanOwnOrganisations(newOwner.Role))
+                throw new InvalidOperationException("The new owner must have the Owner or Admin role.");
+
             var previousOwnerMembership = organisation.Members.FirstOrDefault(m => m.MemberId == organisation.OwnerId);
             if (previousOwnerMembership != null)
             {
@@ -265,7 +272,7 @@ namespace ExcursionSaaS.Application.Services
         #region Helper Methods
         private static void EnsureCanCreate(Roles requesterRole)
         {
-            if (requesterRole != Roles.Admin && requesterRole != Roles.Owner)
+            if (!CanOwnOrganisations(requesterRole))
             {
                 throw new UnauthorizedAccessException("You do not have permission to create an organisation.");
             }
@@ -281,6 +288,8 @@ namespace ExcursionSaaS.Application.Services
 
             throw new UnauthorizedAccessException("Only administrators and organisation owners can perform this action.");
         }
+
+        private static bool CanOwnOrganisations(Roles role) => role == Roles.Admin || role == Roles.Owner;
 
         private static OrganisationVisibility ParseVisibility(string? visibility)
         {
