@@ -9,7 +9,7 @@ namespace ExcursionSaaS.Application.Services
     public class LogoService : ILogoService
     {
         #region Constants and Constructor
-        private const long MaxLogoSizeInBytes = 5 * 1024 * 1024; // 5 MB
+        private const long MaxLogoSizeInBytes = 2 * 1024 * 1024; // 2 MB
         private readonly ILogoStorage _logoStorage;
         
         public LogoService(ILogoStorage logoStorage)

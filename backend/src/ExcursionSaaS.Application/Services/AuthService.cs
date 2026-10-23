@@ -180,7 +180,7 @@ public class AuthService : IAuthServices
         }
 
         if (pendingRegistration.FailedVerificationAttempts >= MaxFailedVerificationAttempts)
-            throw new InvalidOperationException("Invalid email or verification code");
+            return new MessageResponseDTO { Message = "A new code has been sent." };
 
         var now = DateTime.UtcNow;
         if (pendingRegistration.ResendCount >= MaxVerificationCodeResends ||
@@ -208,6 +208,9 @@ public class AuthService : IAuthServices
     {
         var pendingRegistration = await _userRepository.FindPendingByEmailAsync(dto.Email);
         if (pendingRegistration == null)
+            throw new InvalidOperationException("Invalid email or verification code");
+
+        if (pendingRegistration.FailedVerificationAttempts >= MaxFailedVerificationAttempts)
             throw new InvalidOperationException("Invalid email or verification code");
 
         var expectedCode = Encoding.UTF8.GetBytes(pendingRegistration.VerificationCode);
