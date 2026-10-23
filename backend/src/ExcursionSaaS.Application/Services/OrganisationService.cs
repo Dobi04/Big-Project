@@ -71,7 +71,7 @@ namespace ExcursionSaaS.Application.Services
             var isMember = organisation.OwnerId == requesterId || organisation.Members.Any(m => m.MemberId == requesterId);
 
             if (organisation.Visibility != OrganisationVisibility.Public && !isMember)
-                throw new UnauthorizedAccessException("You are not authorized to view this organisation.");
+                throw new KeyNotFoundException("Organisation not found");
             if (organisation.Status != OrganisationStatus.Active && organisation.OwnerId != requesterId)
                 throw new InvalidOperationException("This organisation is not active.");
 
@@ -127,7 +127,7 @@ namespace ExcursionSaaS.Application.Services
 
         public async Task<PagedResponseDTO<OrganisationSummaryDTO>> GetOrganisationsAsync(OrganisationFilterDTO filter)
         {
-            var page = Math.Max(filter.Page, 1);
+            var page = Math.Clamp(filter.Page, 1, PaginationConstants.MaxPage);
             var pageSize = filter.PageSize <= 0 ? 20 : Math.Clamp(filter.PageSize, 1, 100);
 
             var result = await _organisationRepository.GetPagedAsync(filter.Search, filter.Type, page, pageSize);

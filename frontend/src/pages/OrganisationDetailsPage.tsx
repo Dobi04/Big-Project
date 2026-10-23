@@ -21,7 +21,14 @@ export default function OrganisationDetailsPage() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    getOrganisationById(id).then(setOrganisation).catch((requestError: unknown) => setError(getErrorMessage(requestError, 'Failed to load organisation.'))).finally(() => setIsLoading(false));
+    let isCurrent = true;
+    setIsLoading(true);
+    setError(null);
+    getOrganisationById(id)
+      .then((data) => { if (isCurrent) setOrganisation(data); })
+      .catch((requestError: unknown) => { if (isCurrent) setError(getErrorMessage(requestError, 'Failed to load organisation.')); })
+      .finally(() => { if (isCurrent) setIsLoading(false); });
+    return () => { isCurrent = false; };
   }, [id, isLogedIn]);
 
   const handleJoin = async () => {

@@ -22,7 +22,7 @@ namespace ExcursionSaaS.Application.Services
         #region Query Methods
         public async Task<AuditLogPagedResponseDTO> GetAllAsync(AuditLogFilterDTO filter)
         {
-            var page = Math.Max(filter.Page, 1);
+            var page = Math.Clamp(filter.Page, 1, PaginationConstants.MaxPage);
             var pageSize = Math.Clamp(filter.PageSize, 1, PaginationConstants.MaxPageSize);
             if (filter.PageSize <= 0)
                 pageSize = PaginationConstants.DefaultPageSize;

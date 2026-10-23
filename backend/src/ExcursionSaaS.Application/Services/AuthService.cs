@@ -179,6 +179,9 @@ public class AuthService : IAuthServices
             return new MessageResponseDTO { Message = "A new code has been sent." };
         }
 
+        if (pendingRegistration.FailedVerificationAttempts >= MaxFailedVerificationAttempts)
+            throw new InvalidOperationException("Invalid email or verification code");
+
         var now = DateTime.UtcNow;
         if (pendingRegistration.ResendCount >= MaxVerificationCodeResends ||
             now - pendingRegistration.LastCodeSentAt < TimeSpan.FromSeconds(VerificationCodeResendIntervalSeconds))
@@ -213,9 +216,6 @@ public class AuthService : IAuthServices
             !CryptographicOperations.FixedTimeEquals(expectedCode, providedCode))
         {
             pendingRegistration.FailedVerificationAttempts++;
-            if (pendingRegistration.FailedVerificationAttempts >= MaxFailedVerificationAttempts)
-                await _userRepository.RemovePendingAsync(pendingRegistration);
-
             await _userRepository.SaveChangesAsync();
             throw new InvalidOperationException("Invalid email or verification code");
         }

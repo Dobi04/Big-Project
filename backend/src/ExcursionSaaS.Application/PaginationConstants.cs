@@ -8,5 +8,6 @@ namespace ExcursionSaaS.Application
     {
         public const int DefaultPageSize = 10;
         public const int MaxPageSize = 100;
+        public const int MaxPage = 100_000;
     }
 }
