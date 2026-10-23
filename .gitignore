@@ -39,3 +39,5 @@ docker-data/
 *.pem
 *.key
 *.crt
+
+**/uploads/

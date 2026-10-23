@@ -15,6 +15,8 @@ namespace ExcursionSaaS.Application.Services
         private readonly INotificationRepository _notificationRepository;
         private readonly IUserRepository _userRepository;
 
+        private const string LogoUrlPrefix = "/api/uploads/logos/";
+
         public OrganisationService(IOrganisationRepository organisationRepository, INotificationRepository notificationRepository, IUserRepository userRepository)
         {
             _organisationRepository = organisationRepository;
@@ -147,6 +149,7 @@ namespace ExcursionSaaS.Application.Services
         public async Task<OrganisationDetailsDTO> CreateOrganisationAsync(CreateOrganisationDTO createDto, int requesterId, Roles requesterRole)
         {
             EnsureCanCreate(requesterRole);
+            ValidateLogo(createDto.OrganisationLogo);
             // TODO: limit the number of organisations a user can create based on their plan (later)
             var visibility = ParseVisibility(createDto.Visibility);
             var subscriptionType = ParseSubscriptionType(createDto.SubscriptionType);
@@ -187,6 +190,8 @@ namespace ExcursionSaaS.Application.Services
                 ?? throw new KeyNotFoundException("Organisation not found");
 
             EnsureCanManage(organisation, requesterId, requesterRole);
+            if (updateDto.OrganisationLogo != organisation.OrganisationLogo)
+                ValidateLogo(updateDto.OrganisationLogo);
 
             var visibility = ParseVisibility(updateDto.Visibility);
             var subscriptionType = ParseSubscriptionType(updateDto.SubscriptionType);
@@ -328,6 +333,11 @@ namespace ExcursionSaaS.Application.Services
             }
         }
 
+        private static void ValidateLogo(string? logo)
+        {
+            if (!string.IsNullOrEmpty(logo) && !logo.StartsWith(LogoUrlPrefix, StringComparison.Ordinal))
+                throw new ArgumentException("Invalid logo.");
+        }
         #endregion
 
         #region DTO Conversion Methods

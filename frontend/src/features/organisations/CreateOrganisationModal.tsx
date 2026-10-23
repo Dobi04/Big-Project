@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { createOrganisation } from '../../api/organisations';
+import { createOrganisation, uploadOrganisationLogo } from '../../api/organisations';
+import LogoDropzone from '../../components/LogoDropzone';
 import { getErrorMessage } from '../../lib/http';
 
 type Props = {
@@ -10,7 +11,6 @@ type Props = {
 
 type FormState = {
   organisationName: string;
-  organisationLogo: string;
   organisationDescription: string;
   visibility: 'Public' | 'Private';
   type: string;
@@ -24,7 +24,6 @@ const inputClasses = 'w-full rounded-2xl border px-4 py-3 text-sm outline-none f
 export default function CreateOrganisationModal({ isDark, onClose, onCreated }: Props) {
   const [form, setForm] = useState<FormState>({
     organisationName: '',
-    organisationLogo: '',
     organisationDescription: '',
     visibility: 'Private',
     type: '',
@@ -34,6 +33,8 @@ export default function CreateOrganisationModal({ isDark, onClose, onCreated }: 
   });
   const [error, setError] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [uploadedLogoUrl, setUploadedLogoUrl] = useState<string | null>(null);
   const fieldsClass = `${inputClasses}${isDark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-200 bg-white text-slate-900'}`;
   const labelClass = `mb-2 block text-xs uppercase tracking-[0.15em] ${isDark ? 'text-slate-400' : 'text-slate-600'}`;
 
@@ -47,11 +48,16 @@ export default function CreateOrganisationModal({ isDark, onClose, onCreated }: 
 
   const updateField = (field: keyof FormState, value: string) => setForm({ ...form, [field]: value });
 
+  const handleLogoChange = (file: File | null) => {
+  setLogoFile(file);
+  setUploadedLogoUrl(null);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
 
-    if (!form.organisationName.trim() || !form.organisationLogo.trim() || !form.organisationDescription.trim()) {
+    if (!form.organisationName.trim() || !form.organisationDescription.trim()) {
       setError('Please complete all required fields.');
       return;
     }
@@ -65,9 +71,14 @@ export default function CreateOrganisationModal({ isDark, onClose, onCreated }: 
 
     setIsCreating(true);
     try {
+      let organisationLogo = uploadedLogoUrl ?? '';
+      if (logoFile && !uploadedLogoUrl) {
+        organisationLogo = await uploadOrganisationLogo(logoFile);
+        setUploadedLogoUrl(organisationLogo);
+      }
       await createOrganisation({
         organisationName: form.organisationName.trim(),
-        organisationLogo: form.organisationLogo.trim(),
+        organisationLogo: organisationLogo,
         organisationDescription: form.organisationDescription.trim(),
         visibility: form.visibility,
         type: form.type.trim() || 'NoneAdded',
@@ -100,8 +111,8 @@ export default function CreateOrganisationModal({ isDark, onClose, onCreated }: 
           <input id="organisationName" required maxLength={100} value={form.organisationName} onChange={(event) => updateField('organisationName', event.target.value)} className={fieldsClass} />
         </div>
         <div>
-          <label className={labelClass} htmlFor="organisationLogo">Logo URL</label>
-          <input id="organisationLogo" required maxLength={500} value={form.organisationLogo} onChange={(event) => updateField('organisationLogo', event.target.value)} className={fieldsClass} />
+          <p className={labelClass}>Logo</p>
+          <LogoDropzone isDark={isDark} file={logoFile} onChange={handleLogoChange} />
         </div>
         <div>
           <label className={labelClass} htmlFor="organisationDescription">Description</label>

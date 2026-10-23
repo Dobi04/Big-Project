@@ -10,7 +10,7 @@ namespace ExcursionSaaS.Application.DTOs.OrganisationDTOs
         [Required, MaxLength(100)]
         public string OrganisationName { get; set; } = string.Empty;
 
-        [Required, MaxLength(500)]
+        [MaxLength(500)]
         public string OrganisationLogo { get; set; } = string.Empty;
 
         [Required, MaxLength(1000)]

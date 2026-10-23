@@ -46,3 +46,10 @@ export async function createOrganisation(data: CreateOrganisationPayload): Promi
   const response = await apiClient.post<OrganisationDetails>('/api/Organisation', data);
   return response.data;
 }
+
+export async function uploadOrganisationLogo(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await apiClient.post<{ url: string }>('/api/Organisation/logo', formData);
+  return response.data.url;
+}

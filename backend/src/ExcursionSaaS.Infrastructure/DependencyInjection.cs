@@ -1,10 +1,12 @@
 ﻿using ExcursionSaaS.Application.Interfaces.Communication;
 using ExcursionSaaS.Application.Interfaces.Repositories;
 using ExcursionSaaS.Application.Interfaces.Security;
+using ExcursionSaaS.Application.Interfaces.Storage;
 using ExcursionSaaS.Infrastructure.EmailVerification;
 using ExcursionSaaS.Infrastructure.Persistence;
 using ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories;
 using ExcursionSaaS.Infrastructure.Security;
+using ExcursionSaaS.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,6 +43,8 @@ namespace ExcursionSaaS.Infrastructure
             services.AddScoped<INotificationRepository, NotificationRepository>();
 
             services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+
+            services.AddScoped<ILogoStorage, LocalLogoStorage>();
 
             return services;
         }

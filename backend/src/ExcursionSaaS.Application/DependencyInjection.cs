@@ -14,6 +14,8 @@ namespace ExcursionSaaS.Application
             services.AddScoped<IAuthServices, AuthService>();
             services.AddScoped<IOrganisationService, OrganisationService>();
             services.AddScoped<IAuditLogServices, AuditLogService>();
+            services.AddScoped<ILogoService, LogoService>();
+
             return services;
         }
         #endregion

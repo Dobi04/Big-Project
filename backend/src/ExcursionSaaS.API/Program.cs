@@ -1,20 +1,26 @@
-using ExcursionSaaS.API.Services;
 using ExcursionSaaS.API.Extensions;
+using ExcursionSaaS.API.Services;
 using ExcursionSaaS.Application;
 using ExcursionSaaS.Application.Interfaces;
 using ExcursionSaaS.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Net;
 using System.Text;
 using System.Threading.RateLimiting;
-using Microsoft.Extensions.DependencyInjection;
 
 #region Builder Setup
 var builder = WebApplication.CreateBuilder(args);
+
+var uploadsRoot = builder.Configuration["Uploads:Path"]
+    ?? Path.Combine(builder.Environment.ContentRootPath, "uploads");
+builder.Configuration["Uploads:Path"] = uploadsRoot;
+Directory.CreateDirectory(uploadsRoot);
 
 var knownProxyAddresses = builder.Configuration.GetSection("ForwardedHeaders:KnownProxies")
     .Get<string[]>()?
@@ -181,6 +187,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
+    RequestPath = "/api/uploads",
+    OnPrepareResponse = context =>
+        context.Context.Response.Headers["X-Content-Type-Options"] = "nosniff"
+});
 app.UseRateLimiter();
 
 app.UseAuthentication();
