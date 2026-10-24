@@ -124,6 +124,8 @@ public async Task<IActionResult> Action(SomeDTO dto)
 - Realtime: `@microsoft/signalr` je zavisnost — koristi je za bilo kakav "live tracking"/
   notifikacije feature umesto polling-a.
 - Stilovi: isključivo Tailwind utility klase (nema CSS modula, nema styled-components).
+  Jedini izuzetak je `src/index.css` — tu su globalni stilovi i Tailwind v4 `@theme` blok sa
+  Voyra brend tokenima (`brand-50` … `brand-900`).
 - Linter: `oxlint` (`npm run lint`).
 
 ### Struktura foldera
@@ -131,6 +133,7 @@ public async Task<IActionResult> Action(SomeDTO dto)
 ```
 src/
   api/          -> axios klijent i API pozivi
+  assets/       -> Voyra logo fajlovi (`voyra-logo-dark.jpg`, `voyra-logo-light.jpg`)
   components/   -> deljene komponente (npr. ProtectedRoute)
   features/     -> feature-specifične komponente (npr. features/auth/AuthModal)
   hooks/        -> custom hooks (useAuth, useTheme, useSidebar)
@@ -165,25 +168,46 @@ jedan od dva obrasca koja već postoje u kodu:
 2. **Inline `isDark` ternary** unutar same stranice/komponente (`isDark ? '...' : '...'`) — koristi
    se u `pages/*` za sadržaj specifičan za tu stranicu.
 
-Nastavi da koristiš postojeću paletu i ne uvodi nove boje bez razloga:
+Aplikacija koristi **Voyra** brend (narandžasti gradijent autobus + reč "VOYRA"). Dizajn je
+izveden iz loga. Nastavi da koristiš postojeću paletu i ne uvodi nove boje bez razloga:
 
-- Pozadina (dark): `slate-950` / `slate-900`, (light): `slate-100` / `white`.
-- Akcentna boja: **violet** (`violet-400`–`violet-600`, `violet-500/10`–`/20` za pozadine sa
-  providnošću) — koristi se za primarne dugmiće, aktivne linkove, brend akcente.
-- Semantičke boje: `emerald` za pozitivno/uspeh, `rose` za destruktivne akcije (logout, brisanje).
-- Zaobljenja su namerno velika: `rounded-2xl`, `rounded-[26px]`, `rounded-[28px]` za kartice/
-  kontejnere — ne koristi `rounded-md`/`rounded-lg` za glavne kartice.
+- Brend (primarna) boja: **narandžasta** `#E8650F`, dostupna kroz Tailwind tokene
+  (`bg-brand-500`, `text-brand-600`, `border-brand-400`, `bg-brand-500/10`...) definisane u
+  `@theme` bloku u `index.css`. **Ne koristi `violet-*`, `indigo-*` ni `purple-*`** — ljubičasta
+  više nije deo dizajna.
+- Brend gradijent: `#D95F0E → #F28C1E → #F2B03D` (npr. `bg-gradient-to-r from-[#D95F0E]
+  via-[#F28C1E] to-[#F2B03D]`). Koristi ga za primarna dugmad (bela slova, `hover:brightness-110`),
+  aktivne stavke i istaknute akcente — umereno, nikad kao pozadinu cele stranice.
+- Dark tema: pozadina `#1B1F23`, površine (kartice/sidebar/modali) `#232930`, ivice `#2F363E`,
+  tekst `#F1F3F5`, sekundarni tekst `#9AA3AD`.
+- Light tema: pozadina `#FAF8F5` (topla off-white), površine `#FFFFFF`, ivice `#EDE7DF`,
+  tekst `#2B3036`, sekundarni tekst `#6B737C`.
+- Neutralne boje se drže centralizovano u `getThemeClasses` (arbitrary values kao `bg-[#1B1F23]`),
+  ne ponavljaj hex vrednosti po stranicama ako već postoji odgovarajući ključ.
+- Semantičke boje (ne menjaju se brendom): `emerald` za pozitivno/uspeh, `rose` za destruktivne
+  akcije (logout, brisanje) i greške.
+- Zaobljenja su namerno velika: `rounded-xl` / `rounded-2xl`, `rounded-[26px]`, `rounded-[28px]` za
+  kartice/kontejnere — ne koristi `rounded-md`/`rounded-lg` za glavne kartice.
+- Fokus: input/select polja imaju jasan brend focus ring
+  (`focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30`), a `:focus-visible` outline je
+  globalno u brend boji. Kontrast mora biti čitljiv u obe teme (bela slova na narandžastom).
+- Logo: Sidebar (i AuthModal) prikazuju Voyra logo iz `src/assets/` — u dark temi
+  `voyra-logo-dark.jpg`, u light temi `voyra-logo-light.jpg`. Kontejner loga ima istu pozadinu kao
+  slika i zaobljene uglove (`object-contain`, bez izobličenja); u kolabovanom sidebaru manja verzija.
 - Tipografija: `font-black` za velike brojeve/naslove, `uppercase tracking-[0.2em]`/`[0.24em]`
   za male label-e iznad sadržaja.
 - Tranzicije: `transition-all duration-300 ease-out` za sidebar/layout animacije.
 - Mobile-first: sidebar i layout imaju eksplicitne `md:` breakpoint-e (mobile puna širina/overlay,
   desktop fiksna širina `md:w-72` / `md:w-20` kad je kolabovan).
 - Font: `Inter` (fallback `'Segoe UI', sans-serif`), definisan globalno u `index.css`.
+- Ikonice stranica su privremene (emoji/postojeće) i biće zamenjene kasnije — ne uvodi biblioteku
+  ikonica i ne menjaj ih dok se to eksplicitno ne zatraži.
 
 Kada Copilot generiše novu stranicu ili komponentu, treba da:
 - podržava i dark i light temu (nikad samo jednu),
-- koristi postojeću violet/slate/emerald/rose paletu, ne uvodi nove boje,
+- koristi postojeću Voyra paletu (brend narandžasta + neutralne dark/light boje + emerald/rose za status), ne uvodi nove boje i ne koristi violet,
 - prati postojeće razmere zaobljenja, spacing (`p-4`, `p-5`, `gap-2`/`gap-3`) i tipografske skale,
+- za primarne akcije koristi brend gradijent dugme, a za sekundarne obrub + neutralnu pozadinu,
 - bude responsive po istom mobile-first obrascu kao Sidebar/HomePage.
 
 ### LocalStorage / auth state na frontendu
@@ -212,5 +236,5 @@ login/register poziva), osim ako se eksplicitno migrira na zustand store.
 4. Prati DTO/Service/Repository/Interface imenske konvencije tačno kao u postojećem kodu.
 5. Za nove auth-osetljive endpoint-e uvek dodaj rate limiting i isti try/catch -> HTTP status
    mapping obrazac.
-6. Za novi UI uvek podrži dark/light temu i koristi postojeću paletu i zaobljenja, ne izmišljaj
-   novi vizuelni jezik.
+6. Za novi UI uvek podrži dark/light temu i koristi postojeću Voyra paletu (brend tokeni iz
+   `index.css`) i zaobljenja, ne izmišljaj novi vizuelni jezik.

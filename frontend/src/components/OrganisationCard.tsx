@@ -16,18 +16,18 @@ export default function OrganisationCard({ isDark, organisation }: OrganisationC
     .toUpperCase();
 
   return (
-    <article className={`rounded-2xl border p-4 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+    <article className={`rounded-2xl border p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-lg ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start gap-3">
         {organisation.organisationLogo ? (
           <img src={organisation.organisationLogo} alt="" className="h-12 w-12 rounded-2xl object-cover" />
         ) : (
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500 text-sm font-black text-white">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-[#D95F0E] via-[#F28C1E] to-[#F2B03D] text-sm font-black text-white">
             {initials || '?'}
           </div>
         )}
         <div className="min-w-0 flex-1">
           <h2 className={`truncate text-base font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{organisation.organisationName}</h2>
-          <span className={`mt-1 inline-block rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${isDark ? 'bg-violet-500/15 text-violet-300' : 'bg-violet-100 text-violet-700'}`}>
+          <span className={`mt-1 inline-block rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${isDark ? 'bg-brand-500/15 text-brand-300' : 'bg-brand-50 text-brand-700'}`}>
             {organisation.type}
           </span>
         </div>
@@ -42,7 +42,7 @@ export default function OrganisationCard({ isDark, organisation }: OrganisationC
       <button
         type="button"
         onClick={() => navigate(`/organisations/${organisation.id}`)}
-        className="mt-4 w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white hover:bg-violet-600"
+        className="mt-4 w-full rounded-2xl voyra-gradient px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110"
       >
         View
       </button>

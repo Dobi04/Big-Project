@@ -47,6 +47,7 @@ export default function MainLayout() {
       <div className={`min-h-screen transition-colors duration-200 ${classes.shell}`}>
         <Sidebar
           classes={classes}
+          isDark={theme === 'dark'}
           isMobileOpen={sidebar.isMobileOpen}
           isCollapsed={sidebar.isCollapsed}
           onCloseMobile={sidebar.closeMobile}
@@ -70,7 +71,7 @@ export default function MainLayout() {
             isSidebarCollapsed={sidebar.isCollapsed}
           />
 
-          <main className="mx-auto max-w-md px-4 py-5 pb-20">
+          <main className="mx-auto max-w-6xl px-4 py-6 pb-20 sm:px-6 lg:px-8">
             <Outlet context={{ theme, openAuth: openAuthModal } satisfies LayoutOutletContext} />
           </main>
         </div>

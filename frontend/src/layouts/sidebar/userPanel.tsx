@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function UserPanel({ classes, isCollapsed, isLoggedIn, username, role, onLogout, onOpenAuth }: Props) {
-  if (isCollapsed) return null; // u collapsed modu ostavljamo samo nav ikonice, čisto i minimalno
+  if (isCollapsed) return null; // Keep the collapsed sidebar focused on navigation icons.
 
   if (isLoggedIn) {
     return (
@@ -22,8 +22,8 @@ export default function UserPanel({ classes, isCollapsed, isLoggedIn, username, 
         <div className={`rounded-2xl border px-3 py-3 ${classes.userPanel}`}>
           <p className={`text-[10px] uppercase tracking-[0.18em] ${classes.subtleText}`}>Welcome</p>
           <p className="mt-1 text-base font-semibold">{username}</p>
-          <p className={`mt-2 text-[10px] uppercase tracking-[0.18em] ${classes.subtleText}`}>Uloga</p>
-          <p className="text-sm font-medium text-violet-400">{role || 'User'}</p>
+          <p className={`mt-2 text-[10px] uppercase tracking-[0.18em] ${classes.subtleText}`}>Role</p>
+          <p className="text-sm font-medium text-brand-400">{role || 'User'}</p>
         </div>
         <button
           type="button"
@@ -48,7 +48,7 @@ export default function UserPanel({ classes, isCollapsed, isLoggedIn, username, 
       <button
         type="button"
         onClick={() => onOpenAuth('login')}
-        className="w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-600/30 transition hover:bg-violet-400"
+        className="w-full rounded-2xl voyra-gradient px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-900/30 transition hover:brightness-110"
       >
         Log in
       </button>

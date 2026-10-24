@@ -8,7 +8,6 @@ import OrganisationDetailsPage from './pages/OrganisationDetailsPage';
 import OrganisationWorkspacePage from './pages/OrganisationWorkspacePage';
 import MyOrganisationsPage from './pages/MyOrganisationsPage';
 import JoinedOrganisationsPage from './pages/JoinedOrganisationsPage';
-import TrackingPage from './pages/TrackingPage';
 import PaymentsPage from './pages/PaymentsPage';
 import AdminPage from './pages/AdminPage';
 import { apiClient } from './api/client';
@@ -51,7 +50,6 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path="/organisations/:id/workspace" element={<OrganisationWorkspacePage />} />
             <Route path="/joined-organisations" element={<JoinedOrganisationsPage />} />
-            <Route path="/tracking" element={<TrackingPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
           </Route>
 

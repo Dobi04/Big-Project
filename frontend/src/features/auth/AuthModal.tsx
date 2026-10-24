@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '../../api/client';
 import { getErrorMessage } from '../../lib/http';
+import darkLogo from '../../assets/voyra-logo-dark.jpg';
 
 type AuthMode = 'signin' | 'login';
 
@@ -157,19 +158,23 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/70 p-4 backdrop-blur-sm md:items-center" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/75 p-4 backdrop-blur-md md:items-center" onClick={onClose}>
       <div
-        className="w-full max-w-md rounded-t-[28px] border border-slate-700 bg-slate-900 p-5 shadow-2xl shadow-slate-950/50 md:rounded-[28px]"
+        className="max-h-[calc(100dvh-1rem)] w-full max-w-md overflow-y-auto rounded-t-[28px] border border-slate-800 bg-slate-900 p-5 shadow-2xl shadow-slate-950/60 md:rounded-[28px]"
         onClick={(event) => event.stopPropagation()}
       >
         <button
           type="button"
-          className="ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 text-xl text-slate-200"
+          className="ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 text-xl text-slate-200 transition hover:bg-slate-700"
           onClick={onClose}
           aria-label="Close modal"
         >
           ×
         </button>
+
+        <div className="mx-auto -mt-7 mb-3 w-28 overflow-hidden rounded-xl bg-[#1B1F23]">
+          <img src={darkLogo} alt="Voyra" className="h-auto w-full object-contain" />
+        </div>
 
         {step === 'form' && (
           <>
@@ -181,7 +186,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
               <button
                 type="button"
                 className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-                  mode === 'signin' ? 'bg-violet-500 text-white shadow-lg shadow-violet-500/20' : 'text-slate-300'
+                  mode === 'signin' ? 'voyra-gradient text-white shadow-lg shadow-brand-900/20' : 'text-slate-300'
                 }`}
                 onClick={() => onModeChange('signin')}
               >
@@ -190,7 +195,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
               <button
                 type="button"
                 className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-                  mode === 'login' ? 'bg-violet-500 text-white shadow-lg shadow-violet-500/20' : 'text-slate-300'
+                  mode === 'login' ? 'voyra-gradient text-white shadow-lg shadow-brand-900/20' : 'text-slate-300'
                 }`}
                 onClick={() => onModeChange('login')}
               >
@@ -208,7 +213,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                       value={form.name}
                       onChange={handleChange}
                       required
-                      className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-violet-400"
+                      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                       placeholder="Your name"
                     />
                   </label>
@@ -220,7 +225,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                       value={form.surname}
                       onChange={handleChange}
                       required
-                      className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-violet-400"
+                      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                       placeholder="Your surname"
                     />
                   </label>
@@ -235,7 +240,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                   onChange={handleChange}
                   required
                   minLength={mode === 'signin' ? 8 : undefined}
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-violet-400"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                   placeholder="username"
                 />
               </label>
@@ -249,7 +254,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                     value={form.email}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-violet-400"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                     placeholder="you@example.com"
                   />
                 </label>
@@ -263,7 +268,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-violet-400"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                   placeholder="••••••••"
                 />
               </label>
@@ -273,7 +278,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
 
               <button
                 type="submit"
-                className="w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition enabled:hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full rounded-2xl voyra-gradient px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-900/30 transition enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Please wait...' : mode === 'signin' ? 'Create account' : 'Log in'}
@@ -300,7 +305,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
                   maxLength={6}
                   inputMode="numeric"
                   pattern="[0-9]{6}"
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-800 px-3 py-3 text-center text-lg tracking-widest text-white outline-none focus:border-violet-400"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-3 text-center text-lg tracking-widest text-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                   placeholder="XXX XXX"
                 />
               </label>
@@ -310,7 +315,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
 
               <button
                 type="submit"
-                className="w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 disabled:opacity-70"
+                className="w-full rounded-2xl voyra-gradient px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-900/30 transition hover:brightness-110 disabled:opacity-50"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Please wait...' : 'Verify'}
@@ -318,7 +323,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
 
               <p className="text-center text-xs text-slate-400">
                 Didn't get a code?{' '}
-                <button type="button" onClick={handleResend} className="text-violet-400 underline">
+                <button type="button" onClick={handleResend} className="text-brand-300 underline">
                   Resend
                 </button>
               </p>
@@ -336,7 +341,7 @@ export default function AuthModal({ isOpen, mode, onClose, onModeChange, onAuthS
             <button
               type="button"
               onClick={onClose}
-              className="mt-5 w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white"
+              className="mt-5 w-full rounded-2xl voyra-gradient px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110"
             >
               Main Page
             </button>

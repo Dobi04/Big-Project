@@ -9,7 +9,7 @@ import { usePagedQuery } from '../hooks/usePagedQuery';
 import type { LayoutOutletContext } from '../layouts/MainLayout';
 
 const PAGE_SIZE = 20;
-const inputClasses = 'w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-violet-400 ';
+const inputClasses = 'w-full rounded-xl border px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 ';
 
 export default function OrganisationsPage() {
   const { theme } = useOutletContext<LayoutOutletContext>();
@@ -21,7 +21,7 @@ export default function OrganisationsPage() {
 
   return (
     <section className="space-y-4" aria-label="Organisations page">
-      <div className={`rounded-[28px] border p-5 ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+      <div className={`rounded-2xl border p-5 shadow-sm ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
         <h1 className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Organisations</h1>
         <p className={`mt-3 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>Find an organisation and explore its community.</p>
       </div>

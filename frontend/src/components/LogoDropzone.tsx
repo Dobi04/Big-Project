@@ -56,7 +56,7 @@ export default function LogoDropzone({ isDark, file, onChange }: Props) {
   };
 
   const zoneClasses = isDragging
-    ? 'border-violet-400 bg-violet-500/10'
+    ? 'border-brand-400 bg-brand-500/10'
     : isDark
       ? 'border-slate-700 bg-slate-800'
       : 'border-slate-200 bg-white';

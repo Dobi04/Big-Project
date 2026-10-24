@@ -19,7 +19,7 @@ type FormState = {
   yearlyPrice: string;
 };
 
-const inputClasses = 'w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-violet-400 ';
+const inputClasses = 'w-full rounded-xl border px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 ';
 
 export default function CreateOrganisationModal({ isDark, onClose, onCreated }: Props) {
   const [form, setForm] = useState<FormState>({
@@ -99,11 +99,11 @@ export default function CreateOrganisationModal({ isDark, onClose, onCreated }: 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/70 p-0 backdrop-blur-sm sm:items-center sm:p-4" onClick={onClose}>
-      <section role="dialog" aria-modal="true" aria-labelledby="createOrganisationTitle" aria-label="Create organisation form" onClick={(event) => event.stopPropagation()} className={`max-h-[calc(100dvh-1rem)] w-full max-w-3xl overflow-y-auto rounded-t-[28px] border p-5 shadow-2xl sm:rounded-[28px] ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/75 p-0 backdrop-blur-md sm:items-center sm:p-4" onClick={onClose}>
+      <section role="dialog" aria-modal="true" aria-labelledby="createOrganisationTitle" aria-label="Create organisation form" onClick={(event) => event.stopPropagation()} className={`max-h-[calc(100dvh-1rem)] w-full max-w-3xl overflow-y-auto rounded-t-[28px] border p-5 shadow-2xl sm:rounded-[28px] ${isDark ? 'border-slate-800 bg-slate-900 shadow-black/40' : 'border-slate-200 bg-white shadow-slate-900/10'}`}>
         <div className="mb-5 flex items-center justify-between gap-4">
           <h1 id="createOrganisationTitle" className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>Create organisation</h1>
-          <button type="button" onClick={onClose} aria-label="Close modal" className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xl ${isDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700'}`}>×</button>
+          <button type="button" onClick={onClose} aria-label="Close modal" className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xl transition ${isDark ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>×</button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-5">
         <div>
@@ -150,8 +150,8 @@ export default function CreateOrganisationModal({ isDark, onClose, onCreated }: 
         </div>
         {error && <p className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</p>}
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <button type="button" onClick={onClose} className={`rounded-2xl border px-4 py-3 text-sm font-semibold ${isDark ? 'border-slate-700 text-slate-200 hover:bg-slate-800' : 'border-slate-200 text-slate-700 hover:bg-slate-50'}`}>Cancel</button>
-          <button type="submit" disabled={isCreating} className="rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-violet-600 disabled:cursor-not-allowed disabled:opacity-60">{isCreating ? 'Creating...' : 'Create organisation'}</button>
+          <button type="button" onClick={onClose} className={`rounded-xl border px-4 py-3 text-sm font-semibold transition hover:border-brand-400 hover:text-brand-500 ${isDark ? 'border-slate-700 text-slate-200 hover:bg-slate-800' : 'border-slate-200 text-slate-700 hover:bg-slate-50'}`}>Cancel</button>
+          <button type="submit" disabled={isCreating} className="rounded-xl voyra-gradient px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50">{isCreating ? 'Creating...' : 'Create organisation'}</button>
         </div>
         </form>
       </section>

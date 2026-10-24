@@ -1,9 +1,12 @@
 import SidebarNav from './SidebarNav';
 import UserPanel from './userPanel';
 import type { getThemeClasses } from '../../lib/themeClasses';
+import darkLogo from '../../assets/voyra-logo-dark.jpg';
+import lightLogo from '../../assets/voyra-logo-light.jpg';
 
 type Props = {
   classes: ReturnType<typeof getThemeClasses>;
+  isDark: boolean;
   isMobileOpen: boolean;
   isCollapsed: boolean;
   onCloseMobile: () => void;
@@ -17,6 +20,7 @@ type Props = {
 
 export default function Sidebar({
   classes,
+  isDark,
   isMobileOpen,
   isCollapsed,
   onCloseMobile,
@@ -45,9 +49,11 @@ export default function Sidebar({
       >
         <div className={`flex items-center justify-between border-b pb-4 ${classes.border}`}>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-violet-500/15 text-xs font-black tracking-[0.2em] text-violet-400">
-              ES
-            </div>
+            <img
+              src={isDark ? darkLogo : lightLogo}
+              alt="Voyra"
+              className={`h-10 shrink-0 rounded-xl object-contain ${isDark ? 'bg-[#1B1F23]' : 'bg-[#FAF8F5]'} ${isCollapsed ? 'w-10' : 'w-14'}`}
+            />
             {!isCollapsed && (
               <div>
                 <p className={`text-xs uppercase tracking-[0.24em] ${classes.subtleText}`}>App</p>

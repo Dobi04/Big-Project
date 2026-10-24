@@ -28,7 +28,7 @@ export default function Header({
         isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-md items-center justify-between px-4">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -40,23 +40,23 @@ export default function Header({
           </button>
 
           {isLoggedIn ? (
-            <div className="flex items-center gap-2 rounded-full border border-violet-300/40 bg-violet-500/10 px-2.5 py-1.5">
+            <div className="flex items-center gap-2 rounded-full border border-brand-400/40 bg-brand-500/10 px-2.5 py-1.5">
               <span className={`text-[10px] uppercase tracking-[0.18em] ${classes.subtleText}`}>Welcome</span>
-              <span className="text-xs font-semibold text-violet-500">{username}</span>
+              <span className="text-xs font-semibold text-brand-500">{username}</span>
             </div>
           ) : (
             <>
               <button
                 type="button"
                 onClick={() => onOpenAuth('signin')}
-                className={`hidden rounded-full border px-3 py-2 text-xs font-medium md:inline-flex ${classes.secondaryButton}`}
+                className={`hidden whitespace-nowrap rounded-full border px-3 py-2 text-xs font-medium md:inline-flex ${classes.secondaryButton}`}
               >
                 Sign in
               </button>
               <button
                 type="button"
                 onClick={() => onOpenAuth('login')}
-                className="hidden rounded-full bg-violet-500 px-3 py-2 text-xs font-semibold text-white md:inline-flex"
+                className="hidden whitespace-nowrap rounded-full voyra-gradient px-4 py-2 text-xs font-semibold text-white shadow-md shadow-brand-900/20 transition hover:brightness-110 md:inline-flex"
               >
                 Log in
               </button>

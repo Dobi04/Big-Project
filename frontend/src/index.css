@@ -1,11 +1,36 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-brand: #E8650F;
+  --color-brand-50: #FFF7ED;
+  --color-brand-100: #FFEDD5;
+  --color-brand-200: #FED7AA;
+  --color-brand-300: #FDBA74;
+  --color-brand-400: #F2B03D;
+  --color-brand-500: #E8650F;
+  --color-brand-600: #D95F0E;
+  --color-brand-700: #BD4E0B;
+  --color-brand-800: #963D0C;
+  --color-brand-900: #7A350E;
+  --color-slate-50: #FFFFFF;
+  --color-slate-100: #FAF8F5;
+  --color-slate-200: #EDE7DF;
+  --color-slate-300: #D4D9DE;
+  --color-slate-400: #9AA3AD;
+  --color-slate-500: #6B737C;
+  --color-slate-600: #515B66;
+  --color-slate-700: #3B434C;
+  --color-slate-800: #2F363E;
+  --color-slate-900: #232930;
+  --color-slate-950: #1B1F23;
+}
+
 :root {
   font-family: Inter, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #e2e8f0;
-  background: #020817;
+  color: #F1F3F5;
+  background: #1B1F23;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -27,12 +52,28 @@ body,
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(139, 92, 246, 0.18), transparent 30%),
-    #020817;
+    radial-gradient(circle at top, rgba(232, 101, 15, 0.08), transparent 34%),
+    #1B1F23;
 }
 
 button,
 a,
 input {
   font: inherit;
+}
+
+::selection {
+  color: #FFFFFF;
+  background: rgba(232, 101, 15, 0.75);
+}
+
+:focus-visible {
+  outline: 2px solid #E8650F;
+  outline-offset: 3px;
+}
+
+.voyra-gradient {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38)),
+    linear-gradient(90deg, #D95F0E 0%, #F28C1E 50%, #F2B03D 100%);
 }
