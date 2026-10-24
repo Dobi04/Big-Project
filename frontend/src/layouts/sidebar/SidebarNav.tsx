@@ -3,13 +3,14 @@ import { getVisibleNavItems } from './navigation';
 
 type Props = {
   classes: { navLink: string; iconTile: string };
+  isDark: boolean;
   isCollapsed: boolean;
   isLoggedIn: boolean;
   role: string;
   onNavigate: () => void;
 };
 
-export default function SidebarNav({ classes, isCollapsed, isLoggedIn, role, onNavigate }: Props) {
+export default function SidebarNav({ classes, isDark, isCollapsed, isLoggedIn, role, onNavigate }: Props) {
   const visibleNavItems = getVisibleNavItems(isLoggedIn, role);
 
   return (
@@ -25,7 +26,11 @@ export default function SidebarNav({ classes, isCollapsed, isLoggedIn, role, onN
           }`}
         >
           <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs ${classes.iconTile}`}>
-            {item.icon}
+            {item.iconDark && item.iconLight ? (
+              <img src={isDark ? item.iconDark : item.iconLight} alt="" className="h-8 w-8 rounded-xl object-contain" />
+            ) : (
+              item.icon
+            )}
           </span>
           {!isCollapsed && item.label}
         </Link>

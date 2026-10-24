@@ -85,6 +85,7 @@ export default function Sidebar({
 
         <SidebarNav
           classes={classes}
+          isDark={isDark}
           isCollapsed={isCollapsed}
           isLoggedIn={isLoggedIn}
           role={role}
