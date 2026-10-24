@@ -80,6 +80,7 @@ export default function MainLayout() {
       <AuthModal
         isOpen={isAuthModalOpen}
         mode={authMode}
+        isDark={theme === 'dark'}
         onClose={() => setIsAuthModalOpen(false)}
         onModeChange={setAuthMode}
         onAuthSuccess={handleAuthSuccess}
