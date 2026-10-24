@@ -1,10 +1,8 @@
 ﻿using ExcursionSaaS.Application.DTOs.AuditLogDTOs;
+using ExcursionSaaS.Application.DTOs.Common;
 using ExcursionSaaS.Application.Interfaces.AuditLogs;
 using ExcursionSaaS.Application.Interfaces.Repositories;
 using ExcursionSaaS.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExcursionSaaS.Application.Services
 {
@@ -20,7 +18,7 @@ namespace ExcursionSaaS.Application.Services
         #endregion
 
         #region Query Methods
-        public async Task<AuditLogPagedResponseDTO> GetAllAsync(AuditLogFilterDTO filter)
+        public async Task<PagedResponseDTO<AuditLogResponseDTO>> GetAllAsync(AuditLogFilterDTO filter)
         {
             var page = Math.Clamp(filter.Page, 1, PaginationConstants.MaxPage);
             var pageSize = Math.Clamp(filter.PageSize, 1, PaginationConstants.MaxPageSize);
@@ -38,7 +36,7 @@ namespace ExcursionSaaS.Application.Services
 
             var items = result.Items.Select(ToResponceDto).ToList();
 
-            return new AuditLogPagedResponseDTO
+            return new PagedResponseDTO<AuditLogResponseDTO>
             {
                 Items = items,
                 TotalCount = result.TotalCount,

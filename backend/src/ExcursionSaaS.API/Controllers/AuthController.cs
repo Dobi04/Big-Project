@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 namespace ExcursionSaaS.API.Controllers

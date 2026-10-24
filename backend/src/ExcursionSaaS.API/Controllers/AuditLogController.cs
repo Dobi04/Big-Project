@@ -1,7 +1,6 @@
 ﻿using ExcursionSaaS.Application.DTOs.AuditLogDTOs;
+using ExcursionSaaS.Application.DTOs.Common;
 using ExcursionSaaS.Application.Interfaces.AuditLogs;
-using ExcursionSaaS.Application.Interfaces.Repositories;
-using ExcursionSaaS.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -28,7 +27,7 @@ namespace ExcursionSaaS.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll([FromQuery] AuditLogFilterDTO filter)
         {
-            var result = await _auditLogService.GetAllAsync(filter);
+            PagedResponseDTO<AuditLogResponseDTO> result = await _auditLogService.GetAllAsync(filter);
             return Ok(result);
         }
 

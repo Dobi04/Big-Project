@@ -1,9 +1,5 @@
-﻿using ExcursionSaaS.Application.Interfaces.Organisations;
-using ExcursionSaaS.Application.Interfaces.Storage;
+﻿using ExcursionSaaS.Application.Interfaces.Storage;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExcursionSaaS.Infrastructure.Storage
 {

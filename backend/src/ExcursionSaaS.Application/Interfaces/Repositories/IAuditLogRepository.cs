@@ -1,15 +1,11 @@
 ﻿using ExcursionSaaS.Domain.Entities;
 using ExcursionSaaS.Domain.Enums.AuditLogs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExcursionSaaS.Application.Interfaces.Repositories
 {
     public interface IAuditLogRepository
     {
         #region Query Methods
-        Task<AuditLog?> FindByIdAsync(int id);
         Task<(List<AuditLog> Items, int TotalCount)> GetPagedAsync(
             string? entityName = null,
             int? userId = null,

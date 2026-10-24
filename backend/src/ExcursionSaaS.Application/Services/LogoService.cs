@@ -1,8 +1,5 @@
 ﻿using ExcursionSaaS.Application.Interfaces.Organisations;
 using ExcursionSaaS.Application.Interfaces.Storage;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExcursionSaaS.Application.Services
 {

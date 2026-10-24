@@ -2,9 +2,6 @@
 using ExcursionSaaS.Domain.Entities;
 using ExcursionSaaS.Domain.Enums.AuditLogs;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
 {
@@ -22,9 +19,6 @@ namespace ExcursionSaaS.Infrastructure.Persistence.Configurations.Repositories
         #region Repository Operations
         public Task AddAsync(AuditLog auditLog) => _appDbContext.AuditLogs.AddAsync(auditLog).AsTask();
 
-        public async Task<AuditLog?> FindByIdAsync(int id) => 
-            await _appDbContext.AuditLogs.FirstOrDefaultAsync(auditLog => auditLog.Id == id);
-        
         public async Task<List<AuditLog>> GetAllAsync(string? entityName = null, string? entityId = null, int? userId = null, AuditAction? action = null, DateTime? dateFrom = null, DateTime? dateTo = null)
         {
             var query = BuildQuery(entityName, entityId, userId, action, dateFrom, dateTo);

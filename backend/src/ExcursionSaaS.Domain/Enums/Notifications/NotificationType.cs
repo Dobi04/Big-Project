@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcursionSaaS.Domain.Enums.Notifications
+﻿namespace ExcursionSaaS.Domain.Enums.Notifications
 {
     public enum NotificationType
     {

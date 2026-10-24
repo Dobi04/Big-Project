@@ -1,10 +1,7 @@
 ﻿using ExcursionSaaS.Application.Interfaces.Communication;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
 
 namespace ExcursionSaaS.Infrastructure.EmailVerification
 {

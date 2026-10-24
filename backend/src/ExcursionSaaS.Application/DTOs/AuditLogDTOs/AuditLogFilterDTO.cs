@@ -1,7 +1,4 @@
 ﻿using ExcursionSaaS.Domain.Enums.AuditLogs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExcursionSaaS.Application.DTOs.AuditLogDTOs
 {

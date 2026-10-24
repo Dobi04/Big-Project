@@ -1,6 +1,5 @@
 using ExcursionSaaS.Application.DTOs.Common;
 using ExcursionSaaS.Application.DTOs.OrganisationDTOs;
-using ExcursionSaaS.Domain.Entities;
 using ExcursionSaaS.Domain.Enums.Users;
 
 namespace ExcursionSaaS.Application.Interfaces.Organisations;

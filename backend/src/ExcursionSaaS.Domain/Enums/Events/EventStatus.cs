@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcursionSaaS.Domain.Enums.Events
+﻿namespace ExcursionSaaS.Domain.Enums.Events
 {
     public enum EventStatus
     {

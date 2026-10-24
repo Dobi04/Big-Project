@@ -1,10 +1,6 @@
 ﻿using ExcursionSaaS.Domain.Entities;
-using ExcursionSaaS.Domain.Enums.Organisations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExcursionSaaS.Infrastructure.Persistence.Configurations
 {

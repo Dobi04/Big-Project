@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcursionSaaS.Application.Interfaces.Storage
+﻿namespace ExcursionSaaS.Application.Interfaces.Storage
 {
     public interface ILogoStorage
     {

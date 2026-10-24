@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcursionSaaS.Application.DTOs.Common
+﻿namespace ExcursionSaaS.Application.DTOs.Common
 {
     public class PagedResponseDTO<T>
     {

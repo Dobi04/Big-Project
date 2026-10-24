@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcursionSaaS.Domain.Enums.AuditLogs
+﻿namespace ExcursionSaaS.Domain.Enums.AuditLogs
 {
     public enum AuditAction
     {

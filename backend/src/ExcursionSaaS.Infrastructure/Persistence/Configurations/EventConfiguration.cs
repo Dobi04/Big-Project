@@ -1,5 +1,4 @@
 ﻿using ExcursionSaaS.Domain.Entities;
-using ExcursionSaaS.Domain.Enums.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,6 +1,5 @@
 ﻿using ExcursionSaaS.Application.Interfaces;
 using ExcursionSaaS.Domain.Entities;
-using ExcursionSaaS.Domain.Enums;
 using ExcursionSaaS.Domain.Enums.AuditLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

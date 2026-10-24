@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcursionSaaS.Application.DTOs.OrganisationDTOs
+﻿namespace ExcursionSaaS.Application.DTOs.OrganisationDTOs
 {
     public class OrganisationFilterDTO
     {

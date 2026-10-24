@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcursionSaaS.Application
+﻿namespace ExcursionSaaS.Application
 {
     public static class PaginationConstants
     {
