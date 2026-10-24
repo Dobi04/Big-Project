@@ -26,10 +26,8 @@ export default function SidebarNav({ classes, isDark, isCollapsed, isLoggedIn, r
           }`}
         >
           <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs ${classes.iconTile}`}>
-            {item.iconDark && item.iconLight ? (
+            {item.iconDark && item.iconLight && (
               <img src={isDark ? item.iconDark : item.iconLight} alt="" className="h-8 w-8 rounded-xl object-contain" />
-            ) : (
-              item.icon
             )}
           </span>
           {!isCollapsed && item.label}

@@ -13,7 +13,6 @@ import homeLight from '../../assets/icons/home-light.png';
 
 export type NavItem = {
   label: string;
-  icon?: string;
   iconLight?: string;
   iconDark?: string;
   to: string;
